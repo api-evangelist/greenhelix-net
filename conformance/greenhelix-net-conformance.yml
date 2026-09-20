@@ -1,0 +1,84 @@
+generated: '2026-09-19'
+method: searched
+source: openapi/_original/greenhelix-net-openapi.json + live responses from https://api.greenhelix.net on 2026-09-19
+  + https://github.com/mirni/a2a/tree/main/docs/adr
+standards:
+- id: openapi-3.1
+  name: OpenAPI 3.1
+  conforms: true
+  evidence: openapi/_original/greenhelix-net-openapi.json declares openapi 3.1.0, 114 paths, 132 operations with
+    unique operationIds, 54 component schemas and three securitySchemes applied globally; served at https://api.greenhelix.net/v1/openapi.json
+    (200, application/json).
+- id: rfc9457
+  name: RFC 9457 Problem Details for HTTP APIs
+  conforms: true
+  evidence: 'ErrorResponse schema is described in-spec as ''RFC 9457 Problem Details error response'' (type/title/status/detail/instance);
+    every non-2xx observed live — 404 on /, 401 missing-key and authentication-error on /v1/billing/wallets/{agent_id}/balance,
+    403 on /v1/metrics, 410 on /v1/execute — returned content-type: application/problem+json with an absolute type
+    URI under https://api.greenhelix.net/errors/. ADR-004 records the decision.'
+  caveat: The type URIs do not dereference (https://api.greenhelix.net/errors/http-error is itself a 404) and the
+    contract only declares 200 and 422 responses, so the problem types are documented in prose (api-reference §5)
+    rather than in the contract.
+- id: rfc8594
+  name: RFC 8594 Sunset header / Deprecation header
+  conforms: true
+  evidence: 'Live POST https://api.greenhelix.net/v1/execute returned 410 with deprecation: true, sunset: Thu, 01
+    Oct 2026 00:00:00 GMT and link: </docs/api-reference.md#deprecation-v1-execute>; rel="sunset"; type="text/markdown".
+    The operation description in the contract states every response ''carries RFC 8594 deprecation headers (Deprecation
+    + Sunset + Link rel=sunset)''.'
+  caveat: The sunset link target is relative to the API host and 404s there; the anchor exists only in the GitHub
+    api-reference.
+- id: idempotency
+  name: Idempotency keys on mutating operations
+  conforms: true
+  evidence: CreateIntentRequest and SubmitVerificationRequest carry an optional idempotency_key (maxLength 256);
+    api-reference §8 documents 409 duplicate_intent on reuse; ADR-005 records an Idempotency-Key header design with
+    24h retention.
+  caveat: 'Partial: 2 of 65 write operations declare the field in the contract; the Idempotency-Key HEADER described
+    in ADR-005 is not declared on any operation. See conventions/ idempotency.coverage: partial.'
+- id: pagination
+  name: Pagination (limit/offset + opaque cursor)
+  conforms: true
+  evidence: '23 operations take limit and 10 take offset; GET /v1/pricing additionally accepts an opaque cursor
+    and returns total/limit/offset/has_more (observed live: has_more false, total 137).'
+- id: x402
+  name: x402 HTTP-native payments (Coinbase)
+  conforms: true
+  evidence: components.securitySchemes.X402Payment (apiKey in header X-PAYMENT, 'x402 payment proof for stateless
+    authentication') is applied in the global security list alongside BearerAuth/ApiKeyAuth; api-reference §1 'x402
+    Protocol (Alternative Authentication)' documents on-chain USDC micropayments via a base64 X-PAYMENT header,
+    with 402 codes payment_required / payment_verification_failed / payment_replay_detected.
+  caveat: Docs say the path is active only 'when x402 payment verification is enabled'; no anonymous request in
+    this pass produced a 402 challenge (protected routes answered 401 missing-key), so the live x402 flow was not
+    exercised.
+- id: a2a
+  name: A2A Agent Card discovery
+  conforms: false
+  evidence: https://api.greenhelix.net/.well-known/agent-card.json serves a real card graded FLAVORED against A2A
+    1.0.0 — capabilities is an object and skills is an array, but protocolVersion is absent and the card carries
+    the pre-0.3 authentication object; no JSON-RPC A2A endpoint was found (POST /a2a 404). See a2a/.
+- id: mcp
+  name: Model Context Protocol
+  conforms: true
+  evidence: First-party stdio server @greenhelix/mcp-server 0.1.0 (npm, @modelcontextprotocol/sdk ^1.0.0) with a
+    2025-12-11-schema server.json in the repo; no remote endpoint. See mcp/.
+- id: oauth2
+  name: OAuth 2.0
+  conforms: false
+  evidence: 'No oauth2 securityScheme; /.well-known/oauth-authorization-server and oauth-protected-resource 404
+    on api, www and sandbox hosts; ADR-009: ''No OAuth, no JWT for customer auth — the agent always carries the
+    key.'''
+- id: oidc
+  name: OpenID Connect
+  conforms: false
+  evidence: /.well-known/openid-configuration 404 on every host.
+- id: ed25519-identity
+  name: Ed25519 signed agent identity (provider-specific, not an industry standard)
+  conforms: true
+  evidence: POST /v1/identity/agents returns an Ed25519 keypair; VerifyAgentRequest {message, signature}; IngestMetricsRequest
+    accepts signature + nonce; GET /v1/gatekeeper/proofs/{proof_id} and POST /v1/gatekeeper/proofs/verify.
+  caveat: Recorded for completeness only — not a cross-provider standard and awarded no domain-standard credit.
+domain_standard:
+  declared: null
+  note: No SCIM/OData/OpenRTB/ISO-20022/etc. signature in the contract. The agent-commerce market has no settled
+    domain standard beyond x402 and A2A, both recorded above; no conformance is invented to fill the slot.

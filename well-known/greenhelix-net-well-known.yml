@@ -1,0 +1,208 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  Live GET probes of the named /.well-known/* path list (plus /apis.json and /apis.yml) on greenhelix.net, www.greenhelix.net,
+  api.greenhelix.net and sandbox.greenhelix.net on 2026-09-19. Every row is a request that was issued; every status
+  is the one returned. The A2A agent card probe is recorded in a2a/.
+summary:
+  hosts_probed: 4
+  paths_probed: 56
+  documents_served: 2
+  path_echo_control: passed
+  note: >-
+    One real document: an OpenAI-style ai-plugin.json on the API host (and its sandbox twin). No security.txt, no
+    OAuth/OIDC discovery (the API uses opaque API keys, ADR-009: 'No OAuth, no JWT for customer auth'), no RFC 9728
+    protected-resource metadata, no RFC 9727 api-catalog, no apis.json. The API host returns a proper RFC 9457 404
+    for unknown well-known paths and the negative-control path also 404'd, so its single 200 is a genuine hit, not
+    a catch-all. The apex greenhelix.net is a Cloudflare-fronted origin that is unreachable (522) for every path
+    except /, which 301s to www; www is an nginx static site that 404s everything under /.well-known/.
+hosts:
+- host: greenhelix.net
+  role: Apex — Cloudflare 522 origin-unreachable for every path except / (301 to www)
+  documents:
+  - path: /.well-known/security.txt
+    status: 522
+    content_type: text/plain; charset=UTF-8
+  - path: /.well-known/openid-configuration
+    status: 522
+    content_type: text/plain; charset=UTF-8
+  - path: /.well-known/oauth-authorization-server
+    status: 522
+    content_type: text/plain; charset=UTF-8
+  - path: /.well-known/oauth-protected-resource
+    status: 522
+    content_type: text/plain; charset=UTF-8
+  - path: /.well-known/api-catalog
+    status: 522
+    content_type: text/plain; charset=UTF-8
+  - path: /.well-known/api-catalog.json
+    status: 522
+    content_type: text/plain; charset=UTF-8
+  - path: /.well-known/ai-plugin.json
+    status: 522
+    content_type: text/plain; charset=UTF-8
+  - path: /.well-known/ucp.json
+    status: 522
+    content_type: text/plain; charset=UTF-8
+  - path: /.well-known/acp.json
+    status: 522
+    content_type: text/plain; charset=UTF-8
+  - path: /.well-known/aauth-resource.json
+    status: 522
+    content_type: text/plain; charset=UTF-8
+  - path: /.well-known/apis.json
+    status: 522
+    content_type: text/plain; charset=UTF-8
+  - path: /apis.json
+    status: 522
+    content_type: text/plain; charset=UTF-8
+  - path: /apis.yml
+    status: 522
+    content_type: text/plain; charset=UTF-8
+  - path: /.well-known/greenhelix-net-negative-control-9c1f2e7a.json
+    status: 522
+    control: true
+- host: www.greenhelix.net
+  role: Public website (nginx/1.24.0 static site)
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    content_type: text/html
+  - path: /.well-known/openid-configuration
+    status: 404
+    content_type: text/html
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    content_type: text/html
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    content_type: text/html
+  - path: /.well-known/api-catalog
+    status: 404
+    content_type: text/html
+  - path: /.well-known/api-catalog.json
+    status: 404
+    content_type: text/html
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    content_type: text/html
+  - path: /.well-known/ucp.json
+    status: 404
+    content_type: text/html
+  - path: /.well-known/acp.json
+    status: 404
+    content_type: text/html
+  - path: /.well-known/aauth-resource.json
+    status: 404
+    content_type: text/html
+  - path: /.well-known/apis.json
+    status: 404
+    content_type: text/html
+  - path: /apis.json
+    status: 404
+    content_type: text/html
+  - path: /apis.yml
+    status: 404
+    content_type: text/html
+  - path: /.well-known/greenhelix-net-negative-control-9c1f2e7a.json
+    status: 404
+    control: true
+- host: api.greenhelix.net
+  role: Production API host (FastAPI behind Cloudflare); also serves the A2A agent card, see a2a/
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/openid-configuration
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/api-catalog
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/api-catalog.json
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    content_type: application/json
+    file: greenhelix-net-ai-plugin.json
+    standard: OpenAI plugin manifest (ai-plugin.json v1)
+    note: 'Real document: name_for_model a2a_commerce, auth user_http/bearer, api.type openapi pointing at https://api.greenhelix.net/v1/openapi.json,
+      contact_email support@greenhelix.net, legal_info_url https://greenhelix.net/legal (which does NOT resolve:
+      404 on www, 522 on apex) and logo_url https://api.greenhelix.net/static/logo.png (404).'
+  - path: /.well-known/ucp.json
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/acp.json
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/aauth-resource.json
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/apis.json
+    status: 404
+    content_type: application/problem+json
+  - path: /apis.json
+    status: 404
+    content_type: application/problem+json
+  - path: /apis.yml
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/greenhelix-net-negative-control-9c1f2e7a.json
+    status: 404
+    control: true
+    note: path_echo_control passed — the host does not 200 arbitrary well-known paths
+- host: sandbox.greenhelix.net
+  role: Sandbox API host — same build (1.4.10), databases reset on deploy
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/openid-configuration
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/api-catalog
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/api-catalog.json
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    content_type: application/json
+    file: null
+    note: Same manifest as api.greenhelix.net with api.url and logo_url rewritten to the sandbox host; not saved
+      separately.
+  - path: /.well-known/ucp.json
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/acp.json
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/aauth-resource.json
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/apis.json
+    status: 404
+    content_type: application/problem+json
+  - path: /apis.json
+    status: 404
+    content_type: application/problem+json
+  - path: /apis.yml
+    status: 404
+    content_type: application/problem+json
+  - path: /.well-known/greenhelix-net-negative-control-9c1f2e7a.json
+    status: 404
+    control: true

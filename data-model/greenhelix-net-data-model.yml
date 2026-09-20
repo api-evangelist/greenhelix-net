@@ -1,0 +1,179 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/_original/greenhelix-net-openapi.json — path parameters (agent_id, intent_id, escrow_id, settlement_id,
+  subscription_id, service_id, server_id, dispute_id, org_id, webhook_id, job_id, proof_id, event_type) and request
+  schemas (payer/payee/agent_id/org_id fields) + docs/identity_architecture.dot naming
+docs: https://github.com/mirni/a2a/blob/main/docs/api-reference.md#3-tool-reference
+notation: relationships use has_one / has_many / belongs_to with the foreign-key field; direction is from the entity
+  that owns the reference
+entities:
+- name: Agent
+  id_field: agent_id
+  id_format: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+  domain: identity
+  description: An AI agent with an Ed25519 keypair, wallet and tier-scoped API key; created by POST /v1/register
+    or POST /v1/identity/agents.
+- name: Organization
+  id_field: org_id
+  domain: identity
+  description: A group of agents (CreateOrgRequest, AddMemberRequest).
+- name: Claim
+  domain: identity
+  description: Verified claim / Merkle claim-chain entry attached to an agent (claim-chains).
+- name: Metric
+  id_field: metric_name
+  domain: identity
+  description: Time-series metric point ingested for an agent; optionally Ed25519-signed (IngestMetricsRequest signature+nonce).
+- name: Wallet
+  id_field: agent_id
+  domain: billing
+  description: Per-agent, per-currency balance (CREDITS/USD/EUR/GBP/BTC/ETH) with budget cap, freeze state and transactions.
+- name: Transaction
+  domain: billing
+  description: Ledger entry on a wallet (deposit, withdraw, charge, convert).
+- name: ApiKey
+  domain: paywall
+  description: a2a_{tier}_{24hex} key; created under /v1/billing/keys, revoked/rotated under /v1/infra/keys.
+- name: PaymentIntent
+  id_field: intent_id
+  id_prefix: intent_
+  domain: payments
+  description: Authorize-then-capture payment between payer and payee agents; states pending -> captured/settled
+    -> refunded; optional idempotency_key and metadata; split intents carry SplitEntry[].
+- name: Settlement
+  id_field: settlement_id
+  domain: payments
+  description: Settled transfer produced by capture; refundable.
+- name: Escrow
+  id_field: escrow_id
+  id_prefix: escrow_
+  domain: payments
+  description: Funds held from payer until released or cancelled; performance escrows gate release on a metric check.
+- name: Subscription
+  id_field: subscription_id
+  id_prefix: sub_
+  domain: payments
+  description: Recurring payment between agents; active/suspended/cancelled.
+- name: Service
+  id_field: service_id
+  domain: marketplace
+  description: A service an agent registers for discovery; carries ratings and pricing.
+- name: Rating
+  domain: marketplace
+  description: RateServiceRequest — a rating one agent leaves on a service.
+- name: Server
+  id_field: server_id
+  domain: trust
+  description: A registered server with a composite trust score and SLA compliance record.
+- name: Dispute
+  id_field: dispute_id
+  domain: disputes
+  description: open -> respond -> resolve lifecycle between two agents.
+- name: Message
+  domain: messaging
+  description: Encrypted agent-to-agent message (MessageType enum); negotiations are typed messages.
+- name: Webhook
+  id_field: webhook_id
+  id_prefix: wh_
+  domain: infra
+  description: Registered callback URL with event filter and HMAC secret; has deliveries.
+- name: Delivery
+  domain: infra
+  description: One webhook delivery attempt (status_code, delivered_at).
+- name: Event
+  id_field: event_type
+  domain: infra
+  description: Event-bus message validated against a registered EventSchema; streamed over /v1/events/stream.
+- name: VerificationJob
+  id_field: job_id
+  domain: gatekeeper
+  description: Formal (Z3) verification job producing a Proof.
+- name: Proof
+  id_field: proof_id
+  domain: gatekeeper
+  description: Verifiable proof artifact (GET /v1/gatekeeper/proofs/{proof_id}, POST …/proofs/verify).
+relationships:
+- from: Agent
+  to: Wallet
+  kind: has_one
+  via: agent_id
+- from: Wallet
+  to: Transaction
+  kind: has_many
+  via: agent_id
+- from: Agent
+  to: ApiKey
+  kind: has_many
+  via: agent_id
+- from: Agent
+  to: Claim
+  kind: has_many
+  via: agent_id
+- from: Agent
+  to: Metric
+  kind: has_many
+  via: agent_id
+- from: Organization
+  to: Agent
+  kind: has_many
+  via: org_id/members
+- from: PaymentIntent
+  to: Agent
+  kind: belongs_to
+  via: payer
+- from: PaymentIntent
+  to: Agent
+  kind: belongs_to
+  via: payee
+- from: PaymentIntent
+  to: Settlement
+  kind: has_one
+  via: intent_id (capture)
+- from: Escrow
+  to: Agent
+  kind: belongs_to
+  via: payer
+- from: Escrow
+  to: Agent
+  kind: belongs_to
+  via: payee
+- from: Subscription
+  to: Agent
+  kind: belongs_to
+  via: payer/payee
+- from: Service
+  to: Agent
+  kind: belongs_to
+  via: agent_id (provider)
+- from: Service
+  to: Rating
+  kind: has_many
+  via: service_id
+- from: Server
+  to: Agent
+  kind: belongs_to
+  via: agent_id
+- from: Dispute
+  to: Agent
+  kind: belongs_to
+  via: opened_by / respondent
+- from: Message
+  to: Agent
+  kind: belongs_to
+  via: sender / recipient
+- from: Webhook
+  to: Agent
+  kind: belongs_to
+  via: agent_id / filter_agent_ids
+- from: Webhook
+  to: Delivery
+  kind: has_many
+  via: webhook_id
+- from: Event
+  to: Agent
+  kind: belongs_to
+  via: agent_id (source)
+- from: VerificationJob
+  to: Proof
+  kind: has_one
+  via: job_id

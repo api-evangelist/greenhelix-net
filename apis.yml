@@ -1,23 +1,148 @@
 aid: greenhelix-net
 name: Green Helix
-description: 'Green Helix is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'Green Helix Consulting, LLC builds infrastructure for autonomous AI-agent commerce. Its A2A Commerce
+  Gateway (api.greenhelix.net, v1.4.10) is a single REST API of 137 tools across 16 services: per-agent wallets
+  and metered billing, authorize-then-capture payment intents, standard and performance-gated escrow, subscriptions
+  and split payments, Ed25519 cryptographic agent identity with verifiable claims and reputation, a service marketplace
+  with matching and ratings, composite trust scoring and SLA checks, end-to-end encrypted agent messaging with price
+  negotiation, dispute resolution, HMAC-signed webhooks and an event bus, plus Stripe, GitHub and PostgreSQL connectors.
+  It publishes an OpenAPI 3.1 contract, a machine-readable tool and tier catalog, an A2A agent card, an ai-plugin.json,
+  Python and TypeScript SDKs, a local MCP server, and a sandbox that resets on every deploy. Errors are RFC 9457,
+  rate limits are signaled in headers, and x402 payment proofs are accepted as an alternative to API keys.'
 url: https://raw.githubusercontent.com/api-evangelist/greenhelix-net/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: enrichment pass 2026-09-19 — real OpenAPI, agent card, MCP server, SDKs and tool catalog found
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
 tags:
-- Company
-apis: []
+- Agents
+- Agent Commerce
+- Payments
+- Escrow
+- Billing
+- Marketplace
+- Identity
+- Trust
+- Messaging
+- Webhooks
+- MCP
+- A2A
+- x402
+apis:
+- aid: greenhelix-net:a2a-commerce-gateway-api
+  name: A2A Commerce Gateway API
+  description: 'REST API for agent-to-agent commerce: billing and wallets, payment intents and escrow, subscriptions,
+    identity and reputation, marketplace, trust scoring, messaging and negotiation, disputes, webhooks, event bus,
+    API keys and database operations. 114 paths / 132 operations under /v1 with a global choice of Bearer API key,
+    X-API-Key or x402 X-PAYMENT security. The former POST /v1/execute tool dispatcher is 410 Gone (sunset 2026-10-01);
+    POST /v1/batch remains for multi-tool dispatch and is how the MCP server invokes tools.'
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - Payments
+  - Escrow
+  - Billing
+  - Identity
+  - Marketplace
+  - Trust
+  - Messaging
+  - Disputes
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-a2a-commerce-gateway-openapi.yml
+  - type: OpenAPI
+    url: https://api.greenhelix.net/v1/openapi.json
+    name: Provider-hosted OpenAPI 3.1 (verbatim copy in openapi/_original/)
+  - type: Overlay
+    url: overlays/greenhelix-net-a2a-commerce-gateway-overlay.yaml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+    name: Tool-by-tool reference, error table, rate limits, idempotency
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+    name: Sandbox docs — host https://sandbox.greenhelix.net (its root answers an RFC 9457 404; use /v1/health)
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: DomainSecurity
+  url: security/greenhelix-net-domain-security.yml
+- type: Authentication
+  url: authentication/greenhelix-net-authentication.yml
 - type: Website
   url: https://greenhelix.net/
+- type: Documentation
+  url: https://www.greenhelix.net/docs.html
+- type: GettingStarted
+  url: https://www.greenhelix.net/docs.html#getting-started
+- type: APIReference
+  url: https://api.greenhelix.net/docs
+- type: GitHub
+  url: https://github.com/mirni/a2a
+  name: Source monorepo (gateway, SDKs, MCP server, docs); published under a personal account, not an organization
+- type: Pricing
+  url: https://github.com/mirni/a2a#pricing
+- type: ChangeLog
+  url: https://github.com/mirni/a2a/blob/main/CHANGELOG.md
+- type: Support
+  url: https://www.greenhelix.net/index.html#contact
+  name: Contact section; support@greenhelix.net per ai-plugin.json
+- type: Sandbox
+  url: sandbox/greenhelix-net-sandbox.yml
+- type: AgentCard
+  url: a2a/greenhelix-net-a2a.yml
+- type: WellKnown
+  url: well-known/greenhelix-net-well-known.yml
+- type: MCPServer
+  url: mcp/greenhelix-net-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/greenhelix-net-tool-crosswalk.yml
+- type: Packages
+  url: packages/greenhelix-net-packages.yml
+- type: SDKs
+  url: packages/greenhelix-net-packages.yml
+- type: LLMsTxt
+  url: llms/greenhelix-net-llms.txt
+- type: Conformance
+  url: conformance/greenhelix-net-conformance.yml
+- type: ErrorCatalog
+  url: errors/greenhelix-net-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/greenhelix-net-lifecycle.yml
+- type: Deprecation
+  url: lifecycle/greenhelix-net-lifecycle.yml
+- type: Conventions
+  url: conventions/greenhelix-net-conventions.yml
+- type: Idempotency
+  url: conventions/greenhelix-net-conventions.yml
+- type: ChangeLog
+  url: changelog/greenhelix-net-changelog.yml
+- type: Plans
+  url: plans/greenhelix-net-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/greenhelix-net-rate-limits.yml
+- type: Webhooks
+  url: asyncapi/greenhelix-net-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DataModel
+  url: data-model/greenhelix-net-data-model.yml
+- type: RegulatoryPosture
+  url: regulatory/greenhelix-net-regulatory-posture.yml
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 30
+  pass: local-v3

@@ -1,0 +1,781 @@
+generated: '2026-09-19'
+method: searched
+status: published
+source: https://www.npmjs.com/package/@greenhelix/mcp-server (README) + https://github.com/mirni/a2a/blob/main/sdk-ts/mcp-server/server.json
+  + live GET https://api.greenhelix.net/v1/pricing on 2026-09-19
+description: >-
+  Green Helix ships a first-party LOCAL (stdio) MCP server, @greenhelix/mcp-server 0.1.0 on npm, that exposes the
+  A2A Commerce Gateway's tool catalog to Claude Desktop, Cursor, Claude Code, Windsurf and Zed. There is NO hosted/remote
+  MCP endpoint: POST tools/list to https://api.greenhelix.net/mcp, /v1/mcp and /sse all return RFC 9457 404s and
+  mcp.greenhelix.net does not resolve. The server discovers tools at runtime from GET /v1/pricing (anonymous) and
+  invokes them through POST /v1/batch with the A2A_API_KEY. The provider's MCP-registry manifest names the server
+  net.greenhelix/mcp-server, but the official registry (registry.modelcontextprotocol.io) returns zero results for
+  it, so it is not published there. The README says 141 tools; the live catalog serves 137.
+deployment:
+  mode: local-stdio
+  endpoint: null
+  install: npx -y @greenhelix/mcp-server
+  package: https://www.npmjs.com/package/@greenhelix/mcp-server
+  auth: api-key
+  auth_detail: env A2A_API_KEY (required; a2a_{tier}_{24hex}, free tier self-issued via POST /v1/register); env
+    A2A_BASE_URL optional (default https://api.greenhelix.net)
+  verified: searched
+  remote_probes:
+  - url: https://api.greenhelix.net/mcp
+    method: POST tools/list
+    http_status: 404
+  - url: https://api.greenhelix.net/v1/mcp
+    method: POST tools/list
+    http_status: 404
+  - url: https://api.greenhelix.net/sse
+    method: POST tools/list
+    http_status: 404
+  - url: https://mcp.greenhelix.net/mcp
+    method: POST tools/list
+    http_status: NXDOMAIN
+  checked: '2026-09-19'
+local:
+  name: '@greenhelix/mcp-server'
+  transport: stdio
+  version: 0.1.0
+  published: '2026-04-13'
+  install: npx -y @greenhelix/mcp-server
+  bin: a2a-mcp-server
+  source: https://github.com/mirni/a2a/tree/main/sdk-ts/mcp-server
+  registry_manifest: sdk-ts/mcp-server/server.json (name net.greenhelix/mcp-server, schema 2025-12-11)
+  official_registry: not found — https://registry.modelcontextprotocol.io/v0/servers?search=net.greenhelix returns
+    count 0
+  client_config:
+    mcpServers:
+      a2a:
+        command: npx
+        args:
+        - -y
+        - '@greenhelix/mcp-server'
+        env:
+          A2A_API_KEY: a2a_free_...
+  how_it_works: Tool discovery via GET /v1/pricing; each MCP tools/call becomes a single-item POST /v1/batch; pricing
+    and tier metadata are folded into each tool description.
+tool_catalog:
+  file: mcp/greenhelix-net-tool-catalog.json
+  url: https://api.greenhelix.net/v1/pricing
+  fetched: '2026-09-19'
+  http_status: 200
+  tools: 137
+  schemas: every tool carries input_schema (JSON Schema) + output_schema + pricing.per_call + sla.max_latency_ms
+    + tier_required
+  by_service:
+    billing: 18
+    payments: 22
+    marketplace: 13
+    trust: 6
+    paywall: 5
+    events: 2
+    webhooks: 5
+    identity: 17
+    disputes: 5
+    messaging: 3
+    admin: 4
+    stripe: 13
+    github: 10
+    postgres: 6
+    event_bus: 2
+    gatekeeper: 6
+  by_tier:
+    free: 67
+    pro: 64
+    starter: 6
+  crosswalk: mcp/greenhelix-net-tool-crosswalk.yml
+tools:
+- name: get_balance
+  service: billing
+  description: Get the current wallet balance for an agent in a specific currency.
+  tier: free
+  per_call: 0.0
+- name: get_usage_summary
+  service: billing
+  description: Get usage summary (total cost, calls, tokens) for an agent.
+  tier: free
+  per_call: 0.0
+- name: deposit
+  service: billing
+  description: Deposit funds into an agent's wallet in a specific currency.
+  tier: free
+  per_call: 0.0
+- name: get_transactions
+  service: billing
+  description: Get the transaction ledger for an agent (deposits, withdrawals, charges).
+  tier: free
+  per_call: 0.0
+- name: create_intent
+  service: payments
+  description: Create a payment intent between two agents.
+  tier: free
+  per_call: null
+- name: get_intent
+  service: payments
+  description: Get details of a payment intent by its ID.
+  tier: free
+  per_call: 0.0
+- name: get_escrow
+  service: payments
+  description: Get details of an escrow by its ID.
+  tier: free
+  per_call: 0.0
+- name: capture_intent
+  service: payments
+  description: Capture (settle) a pending payment intent.
+  tier: free
+  per_call: 0.0
+- name: partial_capture
+  service: payments
+  description: Partially capture a pending payment intent for a specified amount.
+  tier: pro
+  per_call: 0.0
+- name: create_escrow
+  service: payments
+  description: Create an escrow between two agents. Funds are held from payer immediately.
+  tier: pro
+  per_call: null
+- name: release_escrow
+  service: payments
+  description: Release escrowed funds to the payee.
+  tier: pro
+  per_call: 0.0
+- name: cancel_escrow
+  service: payments
+  description: Cancel a held escrow and refund the payer.
+  tier: free
+  per_call: 0.0
+- name: list_intents
+  service: payments
+  description: List payment intents for an agent, optionally filtered by status.
+  tier: free
+  per_call: 0.0
+- name: list_escrows
+  service: payments
+  description: List escrows for an agent, optionally filtered by status.
+  tier: free
+  per_call: 0.0
+- name: refund_intent
+  service: payments
+  description: 'Refund a payment intent: voids if pending, reverse-transfers if settled.'
+  tier: free
+  per_call: 0.0
+- name: refund_settlement
+  service: payments
+  description: Refund a settled payment (full or partial). If amount is omitted, refunds the full remaining balance.
+  tier: starter
+  per_call: 0.0
+- name: search_services
+  service: marketplace
+  description: Search the marketplace for available services. Supports pagination via paginate=true.
+  tier: free
+  per_call: 0.0
+- name: search_agents
+  service: marketplace
+  description: Search for agents by capability keywords. Searches service names, descriptions, tools, tags, and
+    categories. Supports pagination via paginate=true.
+  tier: free
+  per_call: 0.0
+- name: best_match
+  service: marketplace
+  description: Find the best matching services for a query with ranking.
+  tier: free
+  per_call: 0.1
+- name: register_service
+  service: marketplace
+  description: Register a new service in the marketplace.
+  tier: pro
+  per_call: 0.0
+- name: get_service
+  service: marketplace
+  description: Get a marketplace service by its ID.
+  tier: free
+  per_call: 0.0
+- name: update_service
+  service: marketplace
+  description: Update fields on an existing marketplace service.
+  tier: free
+  per_call: 0.0
+- name: deactivate_service
+  service: marketplace
+  description: Deactivate a marketplace service listing.
+  tier: free
+  per_call: 0.0
+- name: get_trust_score
+  service: trust
+  description: Get the trust score for a server.
+  tier: free
+  per_call: 0.0
+- name: search_servers
+  service: trust
+  description: Search for servers by name or minimum trust score.
+  tier: free
+  per_call: 0.0
+- name: get_payment_history
+  service: payments
+  description: Get payment history for an agent.
+  tier: free
+  per_call: 0.0
+- name: register_server
+  service: trust
+  description: Register a new server for trust tracking.
+  tier: free
+  per_call: 0.0
+- name: delete_server
+  service: trust
+  description: Delete a server and all its associated trust data (probes, scans, scores).
+  tier: pro
+  per_call: 0.0
+- name: update_server
+  service: trust
+  description: Update a server's name and/or URL.
+  tier: pro
+  per_call: 0.0
+- name: get_global_audit_log
+  service: paywall
+  description: Get the global audit log across all agents (admin operation).
+  tier: pro
+  per_call: 0.0
+- name: publish_event
+  service: events
+  description: Publish an event to the cross-product event bus.
+  tier: free
+  per_call: 0.0
+- name: get_events
+  service: events
+  description: Query events from the event bus with optional type filter and offset.
+  tier: free
+  per_call: 0.0
+- name: register_webhook
+  service: webhooks
+  description: Register a webhook endpoint to receive event notifications.
+  tier: pro
+  per_call: 0.0
+- name: list_webhooks
+  service: webhooks
+  description: List all registered webhooks for an agent. Supports pagination via paginate=true.
+  tier: pro
+  per_call: 0.0
+- name: delete_webhook
+  service: webhooks
+  description: Delete (deactivate) a webhook by its ID.
+  tier: pro
+  per_call: 0.0
+- name: get_webhook_deliveries
+  service: webhooks
+  description: Get delivery history for a webhook endpoint.
+  tier: pro
+  per_call: 0.0
+- name: process_due_subscriptions
+  service: payments
+  description: Trigger processing of all due subscriptions and expired escrows.
+  tier: pro
+  per_call: 0.0
+- name: register_agent
+  service: identity
+  description: Register a cryptographic identity for an agent. Generates Ed25519 keypair.
+  tier: free
+  per_call: 0.0
+- name: verify_agent
+  service: identity
+  description: Verify that a message was signed by the claimed agent.
+  tier: free
+  per_call: 0.0
+- name: submit_metrics
+  service: identity
+  description: Submit trading bot metrics (Sharpe, drawdown, latency, etc.) for platform attestation.
+  tier: pro
+  per_call: 0.0
+- name: get_agent_identity
+  service: identity
+  description: Get the cryptographic identity and public key for an agent.
+  tier: free
+  per_call: 0.0
+- name: get_verified_claims
+  service: identity
+  description: Get all verified metric claims for an agent (e.g., Sharpe >= 2.0).
+  tier: free
+  per_call: 0.0
+- name: get_agent_reputation
+  service: identity
+  description: Get the consumer-side reputation score for an agent.
+  tier: free
+  per_call: 0.0
+- name: create_subscription
+  service: payments
+  description: Create a recurring payment subscription between two agents.
+  tier: starter
+  per_call: 0.0
+- name: cancel_subscription
+  service: payments
+  description: Cancel an active or suspended subscription.
+  tier: starter
+  per_call: 0.0
+- name: get_subscription
+  service: payments
+  description: Get details of a subscription by ID.
+  tier: starter
+  per_call: 0.0
+- name: list_subscriptions
+  service: payments
+  description: List subscriptions for an agent (as payer or payee).
+  tier: starter
+  per_call: 0.0
+- name: reactivate_subscription
+  service: payments
+  description: Reactivate a suspended subscription.
+  tier: starter
+  per_call: 0.0
+- name: create_wallet
+  service: billing
+  description: Create a new wallet for an agent (self-service onboarding).
+  tier: free
+  per_call: 0.0
+- name: withdraw
+  service: billing
+  description: Withdraw funds from an agent's wallet in a specific currency.
+  tier: free
+  per_call: 0.0
+- name: search_agents_by_metrics
+  service: identity
+  description: Search for agents with verified metric claims (e.g., find bots with Sharpe >= 2.0).
+  tier: pro
+  per_call: 0.0
+- name: create_performance_escrow
+  service: payments
+  description: Create an escrow that auto-releases when payee's verified metrics meet a threshold.
+  tier: pro
+  per_call: null
+- name: check_performance_escrow
+  service: payments
+  description: Check if a performance-gated escrow's metric threshold is met and auto-release if so.
+  tier: pro
+  per_call: 0.0
+- name: open_dispute
+  service: disputes
+  description: Open a dispute against an escrow.
+  tier: pro
+  per_call: 0.0
+- name: respond_to_dispute
+  service: disputes
+  description: Respond to an open dispute.
+  tier: pro
+  per_call: 0.0
+- name: resolve_dispute
+  service: disputes
+  description: Resolve a dispute by refunding payer or releasing funds to payee.
+  tier: pro
+  per_call: 0.0
+- name: get_dispute
+  service: disputes
+  description: Get details of a dispute by its ID.
+  tier: free
+  per_call: 0.0
+- name: list_disputes
+  service: disputes
+  description: List disputes where the agent is opener or respondent.
+  tier: free
+  per_call: 0.0
+- name: rotate_key
+  service: paywall
+  description: 'Rotate an API key: revoke the current key and create a new one with the same tier.'
+  tier: free
+  per_call: 0.0
+- name: build_claim_chain
+  service: identity
+  description: Build a Merkle tree from an agent's attestation history for verifiable claim chains.
+  tier: pro
+  per_call: 0.0
+- name: get_claim_chains
+  service: identity
+  description: Get stored Merkle claim chains for an agent.
+  tier: pro
+  per_call: 0.0
+- name: send_message
+  service: messaging
+  description: Send a typed message to another agent.
+  tier: free
+  per_call: 0.0
+- name: get_messages
+  service: messaging
+  description: Get messages for an agent (sent and received).
+  tier: free
+  per_call: 0.0
+- name: negotiate_price
+  service: messaging
+  description: Start a price negotiation with another agent.
+  tier: free
+  per_call: 0.0
+- name: check_sla_compliance
+  service: trust
+  description: Check if a server meets its claimed SLA using trust probe data.
+  tier: pro
+  per_call: 0.0
+- name: list_strategies
+  service: marketplace
+  description: List signal provider strategies in the marketplace.
+  tier: free
+  per_call: 0.0
+- name: get_service_analytics
+  service: billing
+  description: Get usage analytics for an agent (total calls, cost, tokens).
+  tier: free
+  per_call: 0.0
+- name: get_revenue_report
+  service: billing
+  description: Get revenue report for a provider agent (incoming payments).
+  tier: free
+  per_call: 0.0
+- name: create_split_intent
+  service: payments
+  description: Create a split payment across multiple payees with percentage-based distribution.
+  tier: pro
+  per_call: null
+- name: backup_database
+  service: admin
+  description: Create a hot backup of a SQLite database, optionally encrypted with Fernet.
+  tier: pro
+  per_call: 0.0
+- name: restore_database
+  service: admin
+  description: Restore a SQLite database from a backup file, with optional decryption.
+  tier: pro
+  per_call: 0.0
+- name: check_db_integrity
+  service: admin
+  description: Run SQLite integrity check and return page diagnostics for a database.
+  tier: pro
+  per_call: 0.0
+- name: list_backups
+  service: admin
+  description: List all available database backup files.
+  tier: pro
+  per_call: 0.0
+- name: stripe_list_customers
+  service: stripe
+  description: List Stripe customers.
+  tier: pro
+  per_call: 0.01
+- name: stripe_create_customer
+  service: stripe
+  description: Create a Stripe customer.
+  tier: pro
+  per_call: 0.01
+- name: stripe_list_products
+  service: stripe
+  description: List Stripe products.
+  tier: pro
+  per_call: 0.01
+- name: stripe_create_product
+  service: stripe
+  description: Create a Stripe product.
+  tier: pro
+  per_call: 0.01
+- name: stripe_list_prices
+  service: stripe
+  description: List Stripe prices.
+  tier: pro
+  per_call: 0.01
+- name: stripe_create_price
+  service: stripe
+  description: Create a Stripe price.
+  tier: pro
+  per_call: 0.01
+- name: stripe_create_payment_link
+  service: stripe
+  description: Create a Stripe payment link.
+  tier: pro
+  per_call: 0.01
+- name: stripe_list_invoices
+  service: stripe
+  description: List Stripe invoices.
+  tier: pro
+  per_call: 0.01
+- name: stripe_create_invoice
+  service: stripe
+  description: Create a Stripe invoice.
+  tier: pro
+  per_call: 0.01
+- name: stripe_list_subscriptions
+  service: stripe
+  description: List Stripe subscriptions.
+  tier: pro
+  per_call: 0.01
+- name: stripe_cancel_subscription
+  service: stripe
+  description: Cancel a Stripe subscription.
+  tier: pro
+  per_call: 0.01
+- name: stripe_create_refund
+  service: stripe
+  description: Create a Stripe refund.
+  tier: pro
+  per_call: 0.01
+- name: stripe_retrieve_balance
+  service: stripe
+  description: Retrieve Stripe account balance.
+  tier: pro
+  per_call: 0.01
+- name: github_list_repos
+  service: github
+  description: List GitHub repositories.
+  tier: pro
+  per_call: 0.005
+- name: github_get_repo
+  service: github
+  description: Get GitHub repository metadata.
+  tier: pro
+  per_call: 0.005
+- name: github_list_issues
+  service: github
+  description: List issues in a repository.
+  tier: pro
+  per_call: 0.005
+- name: github_create_issue
+  service: github
+  description: Create an issue in a repository.
+  tier: pro
+  per_call: 0.005
+- name: github_list_pull_requests
+  service: github
+  description: List pull requests.
+  tier: pro
+  per_call: 0.005
+- name: github_get_pull_request
+  service: github
+  description: Get pull request details.
+  tier: pro
+  per_call: 0.005
+- name: github_create_pull_request
+  service: github
+  description: Create a pull request.
+  tier: pro
+  per_call: 0.005
+- name: github_list_commits
+  service: github
+  description: List commits in a repository.
+  tier: pro
+  per_call: 0.005
+- name: github_get_file_contents
+  service: github
+  description: Get file contents from a repository.
+  tier: pro
+  per_call: 0.005
+- name: github_search_code
+  service: github
+  description: Search code across repositories.
+  tier: pro
+  per_call: 0.005
+- name: pg_query
+  service: postgres
+  description: Execute a read-only SQL query.
+  tier: pro
+  per_call: 0.01
+- name: pg_execute
+  service: postgres
+  description: Execute a SQL statement (if write-enabled).
+  tier: pro
+  per_call: 0.01
+- name: pg_list_tables
+  service: postgres
+  description: List tables in the database.
+  tier: pro
+  per_call: 0.01
+- name: pg_describe_table
+  service: postgres
+  description: Describe a table's columns and types.
+  tier: pro
+  per_call: 0.01
+- name: pg_explain_query
+  service: postgres
+  description: EXPLAIN a SQL query plan.
+  tier: pro
+  per_call: 0.01
+- name: pg_list_schemas
+  service: postgres
+  description: List schemas in the database.
+  tier: pro
+  per_call: 0.01
+- name: get_metrics_timeseries
+  service: billing
+  description: Get per-agent usage metrics bucketed by hour or day.
+  tier: free
+  per_call: 0.0
+- name: get_agent_leaderboard
+  service: billing
+  description: Rank agents by total spend, calls, trust score, revenue, or rating.
+  tier: free
+  per_call: 0.0
+- name: register_event_schema
+  service: event_bus
+  description: Register a JSON schema for an event type in the event bus.
+  tier: free
+  per_call: 0.0
+- name: get_event_schema
+  service: event_bus
+  description: Retrieve the registered JSON schema for an event type.
+  tier: free
+  per_call: 0.0
+- name: test_webhook
+  service: webhooks
+  description: Send a test ping event to a registered webhook and return the delivery result.
+  tier: free
+  per_call: 0.0
+- name: create_api_key
+  service: paywall
+  description: Create a new API key for yourself (self-service). Only same-agent or admin can create.
+  tier: free
+  per_call: 0.0
+- name: get_volume_discount
+  service: billing
+  description: Calculate discounted price based on historical usage volume.
+  tier: free
+  per_call: 0.0
+- name: estimate_cost
+  service: billing
+  description: Calculate projected cost of N calls to a specific tool without executing them.
+  tier: free
+  per_call: 0.0
+- name: rate_service
+  service: marketplace
+  description: Rate a marketplace service (1-5). One rating per agent per service (upsert).
+  tier: free
+  per_call: 0.0
+- name: get_service_ratings
+  service: marketplace
+  description: Get ratings and reviews for a marketplace service.
+  tier: free
+  per_call: 0.0
+- name: set_budget_cap
+  service: billing
+  description: Set daily/monthly spending caps and alert thresholds for an agent.
+  tier: free
+  per_call: 0.0
+- name: get_budget_status
+  service: billing
+  description: Get current spending vs budget caps and alert status for an agent.
+  tier: free
+  per_call: 0.0
+- name: freeze_wallet
+  service: billing
+  description: Freeze a wallet, blocking all deposits and withdrawals. Admin only.
+  tier: pro
+  per_call: 0.0
+- name: unfreeze_wallet
+  service: billing
+  description: Unfreeze a wallet, allowing deposits and withdrawals again. Admin only.
+  tier: pro
+  per_call: 0.0
+- name: create_org
+  service: identity
+  description: Create a new organization.
+  tier: free
+  per_call: 0.0
+- name: get_org
+  service: identity
+  description: Get organization details and members.
+  tier: free
+  per_call: 0.0
+- name: add_agent_to_org
+  service: identity
+  description: Add an agent to an organization.
+  tier: free
+  per_call: 0.0
+- name: remove_agent_from_org
+  service: identity
+  description: Remove an agent from an organization. Cannot remove the last owner.
+  tier: free
+  per_call: 0.0
+- name: list_api_keys
+  service: paywall
+  description: List all API keys for an agent. Returns truncated key hash prefix, tier, scopes, and created_at (never
+    the full key or hash). Supports pagination via paginate=true.
+  tier: free
+  per_call: 0.0
+- name: revoke_api_key
+  service: paywall
+  description: Soft-delete (revoke) an API key by its hash prefix. The key will no longer be usable for authentication.
+  tier: free
+  per_call: 0.0
+- name: get_exchange_rate
+  service: billing
+  description: Query the exchange rate between two supported currencies.
+  tier: free
+  per_call: 0.0
+- name: convert_currency
+  service: billing
+  description: Convert funds between currency balances for an agent. Withdraws from source currency and deposits
+    converted amount to target currency.
+  tier: free
+  per_call: 0.0
+- name: ingest_metrics
+  service: identity
+  description: Ingest time-series metric data points for an agent. Supports optional Ed25519 signature verification
+    for authenticated submissions.
+  tier: free
+  per_call: 0.0
+- name: query_metrics
+  service: identity
+  description: Query time-series metric data for a specific agent and metric name, with optional time range filtering.
+  tier: free
+  per_call: 0.0
+- name: get_metric_deltas
+  service: identity
+  description: Get performance deltas (current vs previous value) for an agent across all metrics or a specific
+    metric.
+  tier: free
+  per_call: 0.0
+- name: get_metric_averages
+  service: identity
+  description: Get pre-computed rolling averages for an agent over a specified period (7d, 30d, or 90d).
+  tier: free
+  per_call: 0.0
+- name: submit_verification
+  service: gatekeeper
+  description: Submit a formal verification job. Each property can be written as raw Z3 SMT-LIB2 (language='z3_smt2')
+    or as a structured JSON policy (language='json_policy', compiled server-side to SMT-LIB2). Returns a job ID
+    for tracking.
+  tier: pro
+  per_call: 5.0
+- name: get_verification_status
+  service: gatekeeper
+  description: Get the current status and result of a verification job.
+  tier: pro
+  per_call: 0.0
+- name: list_verification_jobs
+  service: gatekeeper
+  description: List verification jobs for an agent with optional status filter.
+  tier: pro
+  per_call: 0.0
+- name: cancel_verification
+  service: gatekeeper
+  description: Cancel a pending or running verification job.
+  tier: pro
+  per_call: 0.0
+- name: get_proof
+  service: gatekeeper
+  description: Retrieve a formal verification proof artifact by ID.
+  tier: pro
+  per_call: 0.0
+- name: verify_proof
+  service: gatekeeper
+  description: Verify a formal verification proof by its SHA3-256 hash. Returns validity status.
+  tier: free
+  per_call: 0.0
+- name: atlas_discover
+  service: marketplace
+  description: 'Enriched agent discovery: marketplace search + trust breakdown + reputation + ratings → Atlas Score.'
+  tier: free
+  per_call: 0.0
+- name: atlas_preflight
+  service: marketplace
+  description: 'Pre-transaction verification: endpoint reachable? trust OK? wallet active? pricing unchanged?'
+  tier: free
+  per_call: 0.0
+- name: atlas_broker
+  service: marketplace
+  description: 'One-call brokering: discover → preflight → create payment intent.'
+  tier: pro
+  per_call: 0.5

@@ -1,0 +1,106 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+provider: Green Helix
+providerId: greenhelix-net
+generated: '2026-09-19'
+method: probed
+source: https://api.greenhelix.net/v1/pricing/tiers
+sources:
+- https://api.greenhelix.net/v1/pricing/tiers
+- https://api.greenhelix.net/v1/pricing (137 per-tool prices)
+- https://www.greenhelix.net/docs.html#upgrading
+- https://github.com/mirni/a2a/blob/main/docs/api-reference.md#subscription-plans
+description: >-
+  Green Helix publishes its plans as a machine-readable endpoint: GET /v1/pricing/tiers returns four tiers with
+  price_cents, credits_included, billing_period, rate_limit_per_hour, burst_allowance, audit_log_retention_days
+  and support_level, and GET /v1/pricing returns per-call prices for all 137 tools (101 free, 30 at 0.005-0.01 credits,
+  a handful at 0.1-5.0). Credits are purchased via Stripe Checkout at POST /v1/checkout; 100 credits = $1 USD, minimum
+  purchase 100 credits, maximum 1,000,000 per transaction, 500-credit signup bonus (api-reference Appendix). The
+  enterprise tier's catalog price is $5,000/yr; the api-reference says '$5,000-$50,000/yr … custom'. A 2% gateway
+  fee applies to payment intents and 1.5% (min 0.01, max 10.0 credits) to escrow (api-reference).
+plan_count: 4
+credit_system:
+  exchange_rate: 100 credits per $1 USD
+  minimum_purchase: 100 credits ($1.00)
+  maximum_per_transaction: 1,000,000 credits ($10,000)
+  signup_bonus: 500 credits ($5.00)
+  purchase: POST /v1/checkout (Stripe Checkout session)
+plans:
+- id: greenhelix-free
+  name: Free
+  type: free
+  description: Basic access for evaluation and small workloads.
+  price: $0
+  currency: USD
+  billing_period: none
+  plan_code: null
+  included:
+    credits: 500
+    credits_note: '500 signup credits on the free tier (docs.html/README); enterprise credits_included is null in
+      the catalog (README: ''Custom'')'
+  limits:
+    rate_limit_per_hour: 100
+    burst_allowance: 10
+    audit_log_retention_days: null
+    support_level: none
+- id: greenhelix-starter
+  name: Starter
+  type: subscription
+  description: For individual agents with moderate usage.
+  price: $29.00 / month
+  currency: USD
+  billing_period: monthly
+  plan_code: starter_monthly
+  included:
+    credits: 3500
+  limits:
+    rate_limit_per_hour: 1000
+    burst_allowance: 25
+    audit_log_retention_days: 7
+    support_level: community
+- id: greenhelix-pro
+  name: Pro
+  type: subscription
+  description: For production agents with higher throughput needs.
+  price: $199.00 / month
+  currency: USD
+  billing_period: monthly
+  plan_code: pro_monthly
+  included:
+    credits: 25000
+  limits:
+    rate_limit_per_hour: 10000
+    burst_allowance: 100
+    audit_log_retention_days: 30
+    support_level: email
+- id: greenhelix-enterprise
+  name: Enterprise
+  type: subscription
+  description: Unlimited access with priority support and SLA.
+  price: $5,000.00 / year
+  currency: USD
+  billing_period: annual
+  plan_code: enterprise_annual
+  included:
+    credits: null
+    credits_note: '500 signup credits on the free tier (docs.html/README); enterprise credits_included is null in
+      the catalog (README: ''Custom'')'
+  limits:
+    rate_limit_per_hour: 100000
+    burst_allowance: 1000
+    audit_log_retention_days: 90
+    support_level: priority
+usage_pricing:
+  source: https://api.greenhelix.net/v1/pricing
+  tools: 137
+  per_call_distribution:
+    '0.0': 101
+    None: 4
+    '0.1': 1
+    '0.01': 19
+    '0.005': 10
+    '5.0': 1
+    '0.5': 1
+  gateway_fees:
+    payment_intent: 2% gateway fee (ADR-011)
+    escrow: 1.5% of amount, min 0.01, max 10.0 credits (api-reference create_escrow)

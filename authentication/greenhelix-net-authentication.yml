@@ -1,0 +1,93 @@
+generated: '2026-09-19'
+method: searched
+source: openapi/greenhelix-net-a2a-commerce-gateway-openapi.yml (three securitySchemes) upgraded from https://www.greenhelix.net/docs.html#authentication,
+  https://github.com/mirni/a2a/blob/main/docs/api-reference.md#1-authentication and https://github.com/mirni/a2a/blob/main/docs/adr/009-auth-rate-limiting.md;
+  401 shapes observed live 2026-09-19
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - header
+  style: Opaque per-agent API key with the tier embedded in the prefix; no OAuth, no OIDC, no JWT (ADR-009). x402
+    payment proof accepted as a stateless alternative when enabled.
+schemes:
+- name: BearerAuth
+  type: http
+  scheme: bearer
+  description: API key passed as Bearer token in the Authorization header.
+  sources:
+  - openapi/greenhelix-net-a2a-commerce-gateway-openapi.yml
+- name: ApiKeyAuth
+  type: apiKey
+  in: header
+  parameter: X-API-Key
+  description: API key passed directly in the X-API-Key header (alternative to Bearer).
+  sources:
+  - openapi/greenhelix-net-a2a-commerce-gateway-openapi.yml
+- name: X402Payment
+  type: apiKey
+  in: header
+  parameter: X-PAYMENT
+  description: x402 payment proof for stateless authentication.
+  sources:
+  - openapi/greenhelix-net-a2a-commerce-gateway-openapi.yml
+docs:
+- https://www.greenhelix.net/docs.html
+- https://github.com/mirni/a2a/blob/main/docs/api-reference.md#1-authentication
+- https://github.com/mirni/a2a/blob/main/docs/adr/009-auth-rate-limiting.md
+api_key:
+  format: 'a2a_{tier}_{24_hex_chars}  (tiers: free, starter, pro, enterprise; e.g. a2a_free_… )'
+  issuance: 'Self-service: POST /v1/register {"agent_id"} (no auth) creates a wallet, a free-tier key and an identity
+    in one step; POST /v1/billing/keys (create_billing_api_key) issues further keys; POST /v1/infra/keys is the
+    deprecated older route.'
+  storage: Plaintext returned exactly once at creation; stored server-side as a SHA-3-256 hash (api-reference) /
+    SHA-256 (ADR-009).
+  rotation: POST /v1/infra/keys/rotate {current_key} with optional X-Rotate-Confirmation header (revoke old, issue
+    new at the same tier); POST /v1/infra/keys/revoke.
+  header_precedence:
+  - 'Authorization: Bearer <key> (preferred)'
+  - 'X-API-Key: <key>'
+  scoping: Tier-scoped (free 100/h … enterprise 100000/h); a key can act only for its own agent_id — 403 forbidden
+    when creating keys for another agent.
+x402:
+  header: X-PAYMENT
+  encoding: base64-encoded JSON payment proof
+  when: when no API key is provided and x402 payment verification is enabled on the gateway
+  settlement: on-chain USDC micropayments
+  errors:
+    402 payment_required: no key and x402 enabled
+    402 payment_verification_failed: proof invalid
+    402 payment_replay_detected: nonce already used
+  note: Declared as securitySchemes.X402Payment and applied globally; not exercised live in this pass (unauthenticated
+    calls answered 401 missing-key, no 402 challenge observed).
+observed:
+- request: GET https://api.greenhelix.net/v1/billing/wallets/example-agent/balance (no credentials)
+  status: 401
+  content_type: application/problem+json
+  body:
+    type: https://api.greenhelix.net/errors/missing-key
+    title: Unauthorized
+    detail: Missing API key
+  www_authenticate: null
+- request: 'same, Authorization: Bearer a2a_free_<unknown>'
+  status: 401
+  body:
+    type: https://api.greenhelix.net/errors/authentication-error
+    title: Unauthorized
+    detail: API key not found
+- request: GET https://api.greenhelix.net/v1/metrics
+  status: 403
+  body:
+    type: https://api.greenhelix.net/errors/forbidden
+    detail: Metrics requires enterprise tier or allowed IP
+public_endpoints:
+- GET /v1/health, /livez, /readyz
+- GET /v1/pricing, /v1/pricing/{tool}, /v1/pricing/summary, /v1/pricing/tiers
+- GET /v1/openapi.json, /v1/onboarding, /docs, /redoc
+- GET /.well-known/agent-card.json, /.well-known/ai-plugin.json
+- POST /v1/register
+oauth:
+  supported: false
+  note: No oauth2/openIdConnect scheme; /.well-known/oauth-authorization-server, oauth-protected-resource and openid-configuration
+    all 404 on api, sandbox and www hosts. No scopes artifact is written.

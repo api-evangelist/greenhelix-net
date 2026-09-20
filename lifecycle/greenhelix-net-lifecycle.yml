@@ -1,0 +1,66 @@
+generated: '2026-09-19'
+method: searched
+source: Live headers on POST https://api.greenhelix.net/v1/execute (2026-09-19) + openapi/_original/greenhelix-net-openapi.json
+  + https://github.com/mirni/a2a/blob/main/CHANGELOG.md
+derived_from: openapi/_original/greenhelix-net-openapi.json
+versioning:
+  scheme: URL path version (/v1) for the REST surface; semver for the application (info.version 1.4.10, echoed by
+    /v1/health)
+  current_version: v1 (app 1.4.10)
+  spec_url: https://api.greenhelix.net/v1/openapi.json
+  base_url: https://api.greenhelix.net
+  policy_published: false
+  note: 'No written versioning policy. Unversioned aliases /health, /pricing, /pricing/{tool} and /execute exist
+    as 301 redirects into /v1 (observed: GET /health -> 301 https://api.greenhelix.net/v1/health).'
+deprecation:
+  policy_published: false
+  sunset_header: true
+  deprecation_header: true
+  rfc8594: true
+  observed:
+    date: '2026-09-19'
+    request: POST https://api.greenhelix.net/v1/execute
+    http_status: 410
+    headers:
+      deprecation: 'true'
+      sunset: Thu, 01 Oct 2026 00:00:00 GMT
+      link: </docs/api-reference.md#deprecation-v1-execute>; rel="sunset"; type="text/markdown"
+    body:
+      type: https://api.greenhelix.net/errors/endpoint-removed
+      title: Gone
+      status: 410
+      detail: POST /v1/execute has been removed. Use the dedicated REST endpoints under /v1/<domain>/<operation>
+        instead. See /docs for the migration guide.
+  deprecated_operations:
+  - operationId: execute_v1_execute_post
+    path: POST /v1/execute
+    state: removed (410 Gone) with RFC 8594 Deprecation + Sunset + Link headers; sunset 2026-10-01
+    in_contract: still listed, deprecated flag NOT set; description says the wrapper 'carries RFC 8594 deprecation
+      headers'
+  - operationId: create_api_key_deprecated_v1_infra_keys_post
+    path: POST /v1/infra/keys
+    state: deprecated by description ('self-service key creation moved to /v1/billing/keys'); still served
+    in_contract: deprecated flag NOT set
+  - operationId: _redirect_execute_execute_post
+    path: POST /execute
+    state: 301 alias of the removed /v1/execute
+  note: >-
+    Green Helix does the mechanically right thing on removal — a 410 with Deprecation/Sunset/Link headers is textbook
+    RFC 8594 — but nothing in the contract flags either deprecated operation (`deprecated: true` appears zero times),
+    the migration guide the Link points at lives only in the GitHub api-reference (the relative link 404s on the
+    API host), the public docs.html and README still present POST /v1/execute as 'the primary endpoint', and the
+    removal is absent from CHANGELOG.md, whose newest entry (v1.4.8, 2026-04-16) predates the deployed 1.4.10.
+status_page:
+  published: false
+  note: No status page found. /v1/health, /livez and /readyz are open health probes (health returns per-database
+    status and tool count); /v1/metrics (Prometheus) is gated to the enterprise tier or an allowed IP (403 observed).
+sla:
+  published: per-tool only
+  note: Every tool in /v1/pricing carries sla.max_latency_ms (200-10000 ms); the enterprise tier is described as
+    'Unlimited access with priority support and SLA' but no uptime or credit terms are published.
+changelog: changelog/greenhelix-net-changelog.yml
+support_windows:
+  free: no support
+  starter: community
+  pro: email
+  enterprise: 'priority (source: /v1/pricing/tiers support_level)'

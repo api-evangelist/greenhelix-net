@@ -1,0 +1,55 @@
+generated: '2026-09-19'
+method: searched
+source: https://www.greenhelix.net/docs.html (SDK install commands) cross-checked against registry.npmjs.org and
+  pypi.org metadata on 2026-09-19
+docs: https://www.greenhelix.net/docs.html
+repository: https://github.com/mirni/a2a
+note: >-
+  Three first-party packages, all published by 'Green Helix <dev@greenhelix.net>' from the github.com/mirni/a2a
+  monorepo (the npm and PyPI metadata both name it; the repo's homepage field is https://www.greenhelix.net). Both
+  SDKs sit at 1.4.5, published 2026-04-14, while the live gateway reports version 1.4.10 (/v1/health) — the SDKs
+  are five patch releases behind the API they wrap and nothing has been published to either registry since April.
+  NOTE ON THE MCP PACKAGE: the repo's sdk-ts/mcp-server/server.json also lists a PyPI package 'a2a-mcp-server' 0.1.0
+  — that name on PyPI belongs to a DIFFERENT author (GongRzhe, an unrelated MCP<->A2A bridge) and the name the repo's
+  own products/mcp_server/pyproject.toml declares, 'a2a-greenhelix-mcp-server', is not published (PyPI 404). Only
+  the npm MCP package exists. The GitHub account 'greenhelix' is an unrelated individual (LIDAR/OCR repos) and is
+  NOT this company.
+packages:
+- language: python
+  name: a2a-greenhelix-sdk
+  registry: pypi
+  official: true
+  url: https://pypi.org/project/a2a-greenhelix-sdk/
+  install: pip install a2a-greenhelix-sdk
+  repository: https://github.com/mirni/a2a
+  version: 1.4.5
+  published: '2026-04-14'
+  releases: 19
+  entry_point: from a2a_client import A2AClient
+  requires: Python 3.11+, httpx
+  note: Async-only; automatic retry with exponential backoff on 429/5xx, connection pooling, 5-minute pricing cache
+    (docs.html).
+- language: typescript
+  name: '@greenhelix/sdk'
+  registry: npm
+  official: true
+  url: https://www.npmjs.com/package/@greenhelix/sdk
+  install: npm install @greenhelix/sdk
+  repository: https://github.com/mirni/a2a (directory sdk-ts)
+  version: 1.4.5
+  published: '2026-04-14'
+  entry_point: import { A2AClient } from '@greenhelix/sdk'
+  requires: Node.js 18+, zero dependencies (built-in fetch)
+- language: typescript
+  name: '@greenhelix/mcp-server'
+  registry: npm
+  official: true
+  kind: mcp-server
+  url: https://www.npmjs.com/package/@greenhelix/mcp-server
+  install: npx -y @greenhelix/mcp-server
+  repository: https://github.com/mirni/a2a (directory sdk-ts/mcp-server)
+  version: 0.1.0
+  published: '2026-04-13'
+  bin: a2a-mcp-server
+  depends_on: '@modelcontextprotocol/sdk ^1.0.0'
+  note: Local stdio MCP server; discovers tools from GET /v1/pricing and invokes them via POST /v1/batch. See mcp/.

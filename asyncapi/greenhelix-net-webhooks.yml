@@ -1,0 +1,71 @@
+generated: '2026-09-19'
+method: searched
+source: 'https://github.com/mirni/a2a/blob/main/docs/api-reference.md#38-webhooks and #45-webhook-setup-and-event-handling
+  + https://github.com/mirni/a2a/blob/main/gateway/src/webhooks.py + live GET https://api.greenhelix.net/v1/signing-key
+  (2026-09-19)'
+docs: https://github.com/mirni/a2a/blob/main/docs/api-reference.md#38-webhooks
+asyncapi_published: false
+asyncapi_note: 'No AsyncAPI document: /asyncapi.yaml and /asyncapi.json are not served, the OpenAPI declares no
+  top-level webhooks object and no callbacks, and the repo contains no asyncapi file. The event surface below is
+  documented in prose and code. Nothing was fabricated.'
+surface: Outbound HMAC-signed HTTPS webhook deliveries from the event bus, plus a Server-Sent Events stream and
+  an inbound Stripe webhook receiver
+operations:
+  register: register_webhook_v1_infra_webhooks_post
+  list: list_webhooks_v1_infra_webhooks_get
+  test: test_webhook_v1_infra_webhooks__webhook_id__test_post
+  delete: delete_webhook_v1_infra_webhooks__webhook_id__delete
+  deliveries: get_webhook_deliveries_v1_infra_webhooks__webhook_id__deliveries_get
+  publish_event: publish_event_v1_infra_events_post
+  register_event_schema: register_event_schema_v1_infra_events_schemas_post
+  get_event_schema: get_event_schema_v1_infra_events_schemas__event_type__get
+  get_events: get_events_v1_infra_events_get
+  sse_stream: event_stream_v1_events_stream_get
+  signing_key: signing_key_v1_signing_key_get
+  stripe_inbound: stripe_webhook_v1_stripe_webhook_post
+registration:
+  request_schema: RegisterWebhookRequest {url, events[], secret, filter_agent_ids?}
+  tier: pro (register/list/delete/deliveries); test_webhook is free
+  additionalProperties: false
+signing:
+  header: X-A2A-Signature
+  algorithm_in_code: HMAC-SHA256 hex digest over the raw payload bytes with the registration secret; timing-safe
+    compare (gateway/src/webhooks.py sign_payload/verify_signature)
+  algorithm_in_docs: '''HMAC-SHA3 signature verification'' (api-reference §3.8 and §4.5)'
+  signing_key_endpoint:
+    url: https://api.greenhelix.net/v1/signing-key
+    observed:
+      algorithm: hmac-sha3-256
+      public_key: 38aef954…f12a75 (64 hex)
+    note: a third description of the scheme; how this platform key relates to the per-webhook secret is not documented
+  consistency_gap: Three sources name three different things (SHA-256 in code, 'HMAC-SHA3' in docs, hmac-sha3-256
+    at /v1/signing-key); the header name X-A2A-Signature is only in the source. Recorded verbatim — a consumer should
+    verify against the code path until the docs settle.
+event_types:
+  documented_examples:
+  - billing.deposit
+  - billing.charge
+  - trust.score_drop
+  - payments.intent_settled
+  - custom.<name> via register_event_schema
+  note: No exhaustive event catalog is published; event types are `<service>.<event>` strings and custom types carry
+    a registered JSON Schema (POST /v1/infra/events/schemas).
+delivery:
+  method: POST JSON to the registered url
+  tracking: GET /v1/infra/webhooks/{webhook_id}/deliveries returns {id, event_type, status_code, delivered_at}
+  test: POST /v1/infra/webhooks/{webhook_id}/test sends a ping and returns {delivery_id, status, response_code}
+  retries: not documented
+streaming:
+  sse:
+    path: GET /v1/events/stream
+    auth: API key
+    filters:
+    - event_type
+    - since_id
+    - agent_id
+    resume: Last-Event-ID header (overrides since_id)
+  websocket: GET /v1/ws is a 'Websocket Upgrade Fallback' route only
+inbound:
+  stripe:
+    path: POST /v1/stripe-webhook
+    note: receiver for Stripe Checkout events; deduplicated on session_id (ADR-005)

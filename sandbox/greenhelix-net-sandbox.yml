@@ -1,0 +1,49 @@
+generated: '2026-09-19'
+method: searched
+source: https://www.greenhelix.net/docs.html#sandbox
+docs:
+- https://www.greenhelix.net/docs.html
+- https://github.com/mirni/a2a#api-reference
+description: >-
+  A hosted sandbox at https://sandbox.greenhelix.net with an identical API surface to production (same 1.4.10 build,
+  137 tools, 16 services — verified live: /v1/health 200 returns the same body, /v1/openapi.json is byte-identical,
+  and the agent card differs only in url). Databases are wiped on every deployment, so state is not durable; the
+  same 500-credit signup bonus applies. Intended for integration tests, demos and CI. There is no separate test-key
+  prefix: keys are a2a_{tier}_{24hex} on both hosts and the SDK is pointed at the sandbox by base URL. Escrow on
+  the platform is 'simulated via an in-memory SQLite ledger — no real funds are held' (provider SKILL.md); Stripe
+  handles real credit purchases.
+environments:
+- name: production
+  base_url: https://api.greenhelix.net
+  probed:
+    url: https://api.greenhelix.net/v1/health
+    status: 200
+    date: '2026-09-19'
+- name: sandbox
+  base_url: https://sandbox.greenhelix.net
+  reset: databases wiped on each deployment
+  credits: 500 free credits — same signup bonus as production
+  probed:
+    url: https://sandbox.greenhelix.net/v1/health
+    status: 200
+    date: '2026-09-19'
+    body: '{"status":"ok","version":"1.4.10","tools":137,...}'
+modes:
+- name: single key format
+  key_prefixes:
+  - a2a_free_
+  - a2a_starter_
+  - a2a_pro_
+  - a2a_enterprise_
+  notes: Tier is embedded in the key prefix; there is no test/live prefix split — environment is selected by host.
+test_values:
+  note: None published. The docs show no magic amounts, test agents or fixture tokens; the sandbox is exercised
+    with ordinary calls against a self-registered agent (POST /v1/register).
+fixtures:
+  webhook_test: POST /v1/infra/webhooks/{webhook_id}/test sends a ping event and returns the delivery result (test_webhook
+    tool, free tier)
+  time_simulation: null
+usage:
+  python: 'async with A2AClient("https://sandbox.greenhelix.net", api_key="a2a_free_...") as client: ...'
+  typescript: 'new A2AClient({ baseUrl: ''https://sandbox.greenhelix.net'', apiKey: ''a2a_free_...'' })'
+  mcp: A2A_BASE_URL=https://sandbox.greenhelix.net npx -y @greenhelix/mcp-server

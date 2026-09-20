@@ -1,0 +1,67 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements — Green Helix A2A Commerce Gateway
+  version: 1.0.0
+extends: openapi/_original/greenhelix-net-openapi.json
+x-generated: '2026-09-19'
+x-method: generated
+actions:
+- target: $.info
+  update:
+    description: 'A2A Commerce Gateway — agent-to-agent commerce infrastructure operated by Green Helix Consulting,
+      LLC: billing and wallets, payment intents and escrow, subscriptions, Ed25519 agent identity and reputation,
+      service marketplace, trust scoring, encrypted messaging and price negotiation, disputes, webhooks and an event
+      bus. 114 paths / 132 operations under /v1. Description, servers[] and contact were added by API Evangelist
+      from the provider''s own homepage, agent card and ai-plugin.json; the verbatim contract as served is in openapi/_original/greenhelix-net-openapi.json.'
+    contact:
+      name: Green Helix
+      url: https://greenhelix.net
+      email: support@greenhelix.net
+- target: $
+  update:
+    servers:
+    - url: https://api.greenhelix.net
+      description: Production
+    - url: https://sandbox.greenhelix.net
+      description: Sandbox (resets on deploy)
+- target: $
+  update:
+    tags:
+    - name: billing
+      description: Wallets, deposits, usage, budget caps, discounts, exchange rates, billing API keys
+    - name: payments
+      description: Payment intents, captures, refunds, escrow, settlements, subscriptions
+    - name: identity
+      description: Ed25519 agent identity, claims, metrics, organizations
+    - name: marketplace
+      description: Service registration, search, matching, ratings, Atlas discovery/brokering
+    - name: trust
+      description: Trust scores, SLA compliance, server registry
+    - name: gatekeeper
+      description: Formal verification jobs and proofs
+    - name: disputes
+      description: Dispute lifecycle
+    - name: messaging
+      description: Encrypted messaging and price negotiation
+    - name: infra
+      description: API keys, webhooks, events, audit log, database operations
+- target: $.paths['/v1/execute'].post
+  update:
+    deprecated: true
+    x-sunset: '2026-10-01'
+    x-observed: 410 Gone with RFC 8594 Deprecation/Sunset/Link headers on 2026-09-19
+- target: $.paths['/v1/infra/keys'].post
+  update:
+    deprecated: true
+    x-replaced-by: create_billing_api_key_v1_billing_keys_post
+- target: $.paths['/v1/payments/intents'].post
+  update:
+    x-idempotency: idempotency_key body field; 409 duplicate_intent on reuse
+- target: $.components.responses
+  update:
+    Problem:
+      description: RFC 9457 problem (observed on every non-2xx)
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

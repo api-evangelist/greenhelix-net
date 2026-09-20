@@ -1,0 +1,46 @@
+generated: '2026-09-19'
+method: searched
+source: https://github.com/mirni/a2a/blob/main/SKILL.md (provider-published, saved verbatim) + three skills generated
+  from openapi/_original/greenhelix-net-openapi.json, conventions/ and errors/
+skills:
+- file: greenhelix-net-a2a-commerce-skill.md
+  name: 'A2A Commerce: Agent Payments & Marketplace'
+  method: searched
+  source: https://raw.githubusercontent.com/mirni/a2a/main/SKILL.md
+  api: openapi/greenhelix-net-a2a-commerce-gateway-openapi.yml
+  operations: []
+  note: Provider-authored Agent Skill (name a2a-commerce, version 1.4.10, install pip a2a-greenhelix-sdk, openclaw
+    env block). Saved verbatim; describes the SDK/tool surface rather than operationIds.
+- file: greenhelix-net-pay-another-agent.md
+  name: Pay another agent (intent → capture → refund)
+  method: generated
+  api: openapi/greenhelix-net-a2a-commerce-gateway-openapi.yml
+  operations:
+  - register_v1_register_post
+  - get_balance_v1_billing_wallets__agent_id__balance_get
+  - create_intent_v1_payments_intents_post
+  - get_intent_v1_payments_intents__intent_id__get
+  - capture_intent_v1_payments_intents__intent_id__capture_post
+  - refund_intent_v1_payments_intents__intent_id__refund_post
+- file: greenhelix-net-escrow-a-service-contract.md
+  name: Escrow a service contract
+  method: generated
+  api: openapi/greenhelix-net-a2a-commerce-gateway-openapi.yml
+  operations:
+  - create_escrow_v1_payments_escrows_post
+  - get_escrow_v1_payments_escrows__escrow_id__get
+  - release_escrow_v1_payments_escrows__escrow_id__release_post
+  - cancel_escrow_v1_payments_escrows__escrow_id__cancel_post
+  - create_performance_escrow_v1_payments_escrows_performance_post
+  - check_performance_escrow_v1_payments_escrows__escrow_id__check_performance_post
+- file: greenhelix-net-discover-and-rate-a-service.md
+  name: Discover, trust-check and rate a service
+  method: generated
+  api: openapi/greenhelix-net-a2a-commerce-gateway-openapi.yml
+  operations:
+  - register_service_v1_marketplace_services_post
+  - search_services_v1_marketplace_services_get
+  - best_match_v1_marketplace_match_get
+  - get_service_v1_marketplace_services__service_id__get
+  - rate_service_v1_marketplace_services__service_id__ratings_post
+  - get_trust_score_v1_trust_servers__server_id__score_get

@@ -1,0 +1,85 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+provider: Green Helix
+providerId: greenhelix-net
+generated: '2026-09-19'
+method: probed
+source: Live response headers observed on GET https://api.greenhelix.net/v1/health (2026-09-19) + GET https://api.greenhelix.net/v1/pricing/tiers
+sources:
+- https://api.greenhelix.net/v1/health (headers)
+- https://api.greenhelix.net/v1/pricing/tiers
+- https://github.com/mirni/a2a/blob/main/docs/api-reference.md#6-rate-limiting
+- https://github.com/mirni/a2a/blob/main/docs/adr/009-auth-rate-limiting.md
+description: >-
+  Sliding-window per-key limits by tier, with a burst window of (rate_limit_per_hour / 60) + burst_allowance per
+  minute, an independent per-tool rate_limit_per_hour where a tool declares one, and a per-IP limiter on public
+  endpoints (60 req/min, burst 120 — ADR-009). Exhaustion returns 429 with RFC 9457 code rate_limit_exceeded; a
+  wallet budget cap also returns 429 (spend_cap_exceeded). Observed live on an anonymous GET /v1/health: x-ratelimit-limit:
+  1000, x-ratelimit-remaining: 995, x-ratelimit-reset: 3103 — the headers are emitted on every response, not only
+  /v1/execute and /v1/batch as the api-reference states. No Retry-After header is documented or was observed; the
+  docs direct clients to X-RateLimit-Reset (seconds until the window resets) and exponential backoff. A batch of
+  N calls counts as N rate events.
+headers:
+  limit: X-RateLimit-Limit
+  remaining: X-RateLimit-Remaining
+  reset: X-RateLimit-Reset (seconds until window reset — NOT an epoch)
+  requestId: X-Request-ID
+  retryAfter: null
+observed:
+  url: https://api.greenhelix.net/v1/health
+  date: '2026-09-19'
+  headers:
+    x-ratelimit-limit: '1000'
+    x-ratelimit-remaining: '995'
+    x-ratelimit-reset: '3103'
+  note: anonymous request — the limit shown is the unauthenticated/public bucket, not a tier
+responseCodes:
+  throttled: 429
+  spendCap: 429
+  codes:
+  - rate_limit_exceeded
+  - spend_cap_exceeded
+limit_count: 6
+limits:
+- name: Free tier
+  scope: per-key
+  metric: requests_per_hour
+  limit: 100
+  timeFrame: hour
+  burst: 10 burst allowance (~12/min)
+- name: Starter tier
+  scope: per-key
+  metric: requests_per_hour
+  limit: 1000
+  timeFrame: hour
+  burst: 25 burst allowance (~42/min)
+- name: Pro tier
+  scope: per-key
+  metric: requests_per_hour
+  limit: 10000
+  timeFrame: hour
+  burst: 100 burst allowance (~267/min)
+- name: Enterprise tier
+  scope: per-key
+  metric: requests_per_hour
+  limit: 100000
+  timeFrame: hour
+  burst: 1000 burst allowance (~2,667/min)
+- name: Public endpoints per IP
+  scope: per-ip
+  metric: requests_per_minute
+  limit: 60
+  timeFrame: minute
+  burst: '120'
+  applies_to: /v1/pricing, /v1/health, /.well-known/agent-card.json (ADR-009)
+- name: Per-tool limit
+  scope: per-endpoint
+  metric: requests_per_hour
+  limit: tool-specific (rate_limit_per_hour in the catalog where declared)
+  timeFrame: hour
+policies:
+- name: Retry
+  description: Exponential backoff with jitter on 429/500/503; prefer sleeping X-RateLimit-Reset seconds. 400/401/402/403/404/409
+    are non-retryable. SDKs retry 429/5xx automatically.
+- name: Batch accounting
+  description: POST /v1/batch with N calls records N rate events; balance is checked for the total up front.

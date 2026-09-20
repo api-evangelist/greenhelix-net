@@ -1,0 +1,816 @@
+generated: '2026-09-19'
+method: derived
+source: mcp/greenhelix-net-tool-catalog.json (GET https://api.greenhelix.net/v1/pricing, 137 tools with input_schema/output_schema)
+  bound to openapi/_original/greenhelix-net-openapi.json (132 operations)
+description: 'Binds each tool the Green Helix MCP server exposes to the REST operation that backs it. The MCP server
+  (@greenhelix/mcp-server) discovers its tool list from GET /v1/pricing — the same catalog saved verbatim next to
+  this file — so the catalog''s input_schema IS the live MCP inputSchema, not a reconstruction. Binding is by operationId
+  prefix: the gateway is FastAPI and generates operationIds as <tool_function>_<path>_<method>, so `get_balance`
+  maps to `get_balance_v1_billing_wallets__agent_id__balance_get` deterministically.'
+surfaces:
+  openapi: openapi/greenhelix-net-a2a-commerce-gateway-openapi.yml (served at https://api.greenhelix.net/v1/openapi.json,
+    open)
+  mcp: local stdio only — npx -y @greenhelix/mcp-server; tool discovery GET /v1/pricing (open), invocation POST
+    /v1/batch (API key)
+  tool_catalog: https://api.greenhelix.net/v1/pricing (open, 200, 137 tools with JSON Schemas, per-call price, SLA
+    and tier)
+  graphql: null
+  gated: tools/call requires an a2a_{tier}_{key} API key; tools/list (the catalog) is anonymous
+coverage:
+  tools: 137
+  bound: 108
+  mcp_only: 29
+  rest_operations: 132
+  rest_only: 23
+crosswalk:
+- tool: get_balance
+  category: billing
+  rest:
+  - get_balance_v1_billing_wallets__agent_id__balance_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_usage_summary
+  category: billing
+  rest:
+  - get_usage_summary_v1_billing_wallets__agent_id__usage_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: deposit
+  category: billing
+  rest:
+  - deposit_v1_billing_wallets__agent_id__deposit_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_transactions
+  category: billing
+  rest:
+  - get_transactions_v1_billing_wallets__agent_id__transactions_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: create_intent
+  category: payments
+  rest:
+  - create_intent_v1_payments_intents_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_intent
+  category: payments
+  rest:
+  - get_intent_v1_payments_intents__intent_id__get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_escrow
+  category: payments
+  rest:
+  - get_escrow_v1_payments_escrows__escrow_id__get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: capture_intent
+  category: payments
+  rest:
+  - capture_intent_v1_payments_intents__intent_id__capture_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: partial_capture
+  category: payments
+  rest:
+  - partial_capture_v1_payments_intents__intent_id__partial_capture_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: create_escrow
+  category: payments
+  rest:
+  - create_escrow_v1_payments_escrows_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: release_escrow
+  category: payments
+  rest:
+  - release_escrow_v1_payments_escrows__escrow_id__release_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: cancel_escrow
+  category: payments
+  rest:
+  - cancel_escrow_v1_payments_escrows__escrow_id__cancel_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: list_intents
+  category: payments
+  rest:
+  - list_intents_v1_payments_intents_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: list_escrows
+  category: payments
+  rest:
+  - list_escrows_v1_payments_escrows_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: refund_intent
+  category: payments
+  rest:
+  - refund_intent_v1_payments_intents__intent_id__refund_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: refund_settlement
+  category: payments
+  rest:
+  - refund_settlement_v1_payments_settlements__settlement_id__refund_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: search_services
+  category: marketplace
+  rest:
+  - search_services_v1_marketplace_services_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: search_agents
+  category: marketplace
+  rest:
+  - search_agents_v1_marketplace_agents_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: best_match
+  category: marketplace
+  rest:
+  - best_match_v1_marketplace_match_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: register_service
+  category: marketplace
+  rest:
+  - register_service_v1_marketplace_services_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_service
+  category: marketplace
+  rest:
+  - get_service_v1_marketplace_services__service_id__get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: update_service
+  category: marketplace
+  rest:
+  - update_service_v1_marketplace_services__service_id__put
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: deactivate_service
+  category: marketplace
+  rest:
+  - deactivate_service_v1_marketplace_services__service_id__deactivate_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_trust_score
+  category: trust
+  rest:
+  - get_trust_score_v1_trust_servers__server_id__score_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: search_servers
+  category: trust
+  rest:
+  - search_servers_v1_trust_servers_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_payment_history
+  category: payments
+  rest:
+  - get_payment_history_v1_payments_history_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: register_server
+  category: trust
+  rest:
+  - register_server_v1_trust_servers_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: delete_server
+  category: trust
+  rest:
+  - delete_server_v1_trust_servers__server_id__delete
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: update_server
+  category: trust
+  rest:
+  - update_server_v1_trust_servers__server_id__put
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_global_audit_log
+  category: paywall
+  rest:
+  - get_global_audit_log_v1_infra_audit_log_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: publish_event
+  category: events
+  rest:
+  - publish_event_v1_infra_events_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_events
+  category: events
+  rest:
+  - get_events_v1_infra_events_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: register_webhook
+  category: webhooks
+  rest:
+  - register_webhook_v1_infra_webhooks_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: list_webhooks
+  category: webhooks
+  rest:
+  - list_webhooks_v1_infra_webhooks_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: delete_webhook
+  category: webhooks
+  rest:
+  - delete_webhook_v1_infra_webhooks__webhook_id__delete
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_webhook_deliveries
+  category: webhooks
+  rest:
+  - get_webhook_deliveries_v1_infra_webhooks__webhook_id__deliveries_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: process_due_subscriptions
+  category: payments
+  rest:
+  - process_due_subscriptions_v1_payments_subscriptions_process_due_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: register_agent
+  category: identity
+  rest:
+  - register_agent_v1_identity_agents_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: verify_agent
+  category: identity
+  rest:
+  - verify_agent_v1_identity_agents__agent_id__verify_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: submit_metrics
+  category: identity
+  rest:
+  - submit_metrics_v1_identity_agents__agent_id__metrics_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_agent_identity
+  category: identity
+  rest:
+  - get_agent_identity_v1_identity_agents__agent_id__get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_verified_claims
+  category: identity
+  rest:
+  - get_verified_claims_v1_identity_agents__agent_id__claims_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_agent_reputation
+  category: identity
+  rest:
+  - get_agent_reputation_v1_identity_agents__agent_id__reputation_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: create_subscription
+  category: payments
+  rest:
+  - create_subscription_v1_payments_subscriptions_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: cancel_subscription
+  category: payments
+  rest:
+  - cancel_subscription_v1_payments_subscriptions__subscription_id__cancel_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_subscription
+  category: payments
+  rest:
+  - get_subscription_v1_payments_subscriptions__subscription_id__get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: list_subscriptions
+  category: payments
+  rest:
+  - list_subscriptions_v1_payments_subscriptions_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: reactivate_subscription
+  category: payments
+  rest:
+  - reactivate_subscription_v1_payments_subscriptions__subscription_id__reactivate_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: create_wallet
+  category: billing
+  rest:
+  - create_wallet_v1_billing_wallets_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: withdraw
+  category: billing
+  rest:
+  - withdraw_v1_billing_wallets__agent_id__withdraw_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: search_agents_by_metrics
+  category: identity
+  rest:
+  - search_agents_by_metrics_v1_identity_agents_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: create_performance_escrow
+  category: payments
+  rest:
+  - create_performance_escrow_v1_payments_escrows_performance_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: check_performance_escrow
+  category: payments
+  rest:
+  - check_performance_escrow_v1_payments_escrows__escrow_id__check_performance_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: open_dispute
+  category: disputes
+  rest:
+  - open_dispute_v1_disputes_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: respond_to_dispute
+  category: disputes
+  rest:
+  - respond_to_dispute_v1_disputes__dispute_id__respond_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: resolve_dispute
+  category: disputes
+  rest:
+  - resolve_dispute_v1_disputes__dispute_id__resolve_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_dispute
+  category: disputes
+  rest:
+  - get_dispute_v1_disputes__dispute_id__get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: list_disputes
+  category: disputes
+  rest:
+  - list_disputes_v1_disputes_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: rotate_key
+  category: paywall
+  rest:
+  - rotate_key_v1_infra_keys_rotate_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: build_claim_chain
+  category: identity
+  rest:
+  - build_claim_chain_v1_identity_agents__agent_id__claim_chains_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_claim_chains
+  category: identity
+  rest:
+  - get_claim_chains_v1_identity_agents__agent_id__claim_chains_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: send_message
+  category: messaging
+  rest:
+  - send_message_v1_messaging_messages_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_messages
+  category: messaging
+  rest:
+  - get_messages_v1_messaging_messages_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: negotiate_price
+  category: messaging
+  rest:
+  - negotiate_price_v1_messaging_negotiations_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: check_sla_compliance
+  category: trust
+  rest:
+  - check_sla_compliance_v1_trust_servers__server_id__sla_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: list_strategies
+  category: marketplace
+  rest:
+  - list_strategies_v1_marketplace_strategies_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_service_analytics
+  category: billing
+  rest:
+  - get_service_analytics_v1_billing_wallets__agent_id__analytics_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_revenue_report
+  category: billing
+  rest:
+  - get_revenue_report_v1_billing_wallets__agent_id__revenue_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: create_split_intent
+  category: payments
+  rest:
+  - create_split_intent_v1_payments_intents_split_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: backup_database
+  category: admin
+  rest:
+  - backup_database_v1_infra_databases__database__backup_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: restore_database
+  category: admin
+  rest:
+  - restore_database_v1_infra_databases__database__restore_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: check_db_integrity
+  category: admin
+  rest:
+  - check_db_integrity_v1_infra_databases__database__integrity_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: list_backups
+  category: admin
+  rest:
+  - list_backups_v1_infra_databases_backups_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_metrics_timeseries
+  category: billing
+  rest:
+  - get_metrics_timeseries_v1_billing_wallets__agent_id__timeseries_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_agent_leaderboard
+  category: billing
+  rest:
+  - get_agent_leaderboard_v1_billing_leaderboard_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: register_event_schema
+  category: event_bus
+  rest:
+  - register_event_schema_v1_infra_events_schemas_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_event_schema
+  category: event_bus
+  rest:
+  - get_event_schema_v1_infra_events_schemas__event_type__get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: test_webhook
+  category: webhooks
+  rest:
+  - test_webhook_v1_infra_webhooks__webhook_id__test_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_volume_discount
+  category: billing
+  rest:
+  - get_volume_discount_v1_billing_discounts_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: estimate_cost
+  category: billing
+  rest:
+  - estimate_cost_v1_billing_estimate_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: rate_service
+  category: marketplace
+  rest:
+  - rate_service_v1_marketplace_services__service_id__ratings_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_service_ratings
+  category: marketplace
+  rest:
+  - get_service_ratings_v1_marketplace_services__service_id__ratings_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: set_budget_cap
+  category: billing
+  rest:
+  - set_budget_cap_v1_billing_wallets__agent_id__budget_put
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_budget_status
+  category: billing
+  rest:
+  - get_budget_status_v1_billing_wallets__agent_id__budget_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: freeze_wallet
+  category: billing
+  rest:
+  - freeze_wallet_v1_billing_wallets__agent_id__freeze_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: unfreeze_wallet
+  category: billing
+  rest:
+  - unfreeze_wallet_v1_billing_wallets__agent_id__unfreeze_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: create_org
+  category: identity
+  rest:
+  - create_org_v1_identity_orgs_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_org
+  category: identity
+  rest:
+  - get_org_v1_identity_orgs__org_id__get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: add_agent_to_org
+  category: identity
+  rest:
+  - add_agent_to_org_v1_identity_orgs__org_id__members_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: remove_agent_from_org
+  category: identity
+  rest:
+  - remove_agent_from_org_v1_identity_orgs__org_id__members__agent_id__delete
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: list_api_keys
+  category: paywall
+  rest:
+  - list_api_keys_v1_infra_keys_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: revoke_api_key
+  category: paywall
+  rest:
+  - revoke_api_key_v1_infra_keys_revoke_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_exchange_rate
+  category: billing
+  rest:
+  - get_exchange_rate_v1_billing_exchange_rates_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: convert_currency
+  category: billing
+  rest:
+  - convert_currency_v1_billing_wallets__agent_id__convert_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: ingest_metrics
+  category: identity
+  rest:
+  - ingest_metrics_v1_identity_metrics_ingest_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: query_metrics
+  category: identity
+  rest:
+  - query_metrics_v1_identity_metrics_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_metric_deltas
+  category: identity
+  rest:
+  - get_metric_deltas_v1_identity_metrics_deltas_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_metric_averages
+  category: identity
+  rest:
+  - get_metric_averages_v1_identity_metrics_averages_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: submit_verification
+  category: gatekeeper
+  rest:
+  - submit_verification_v1_gatekeeper_jobs_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_verification_status
+  category: gatekeeper
+  rest:
+  - get_verification_status_v1_gatekeeper_jobs__job_id__get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: list_verification_jobs
+  category: gatekeeper
+  rest:
+  - list_verification_jobs_v1_gatekeeper_jobs_get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: cancel_verification
+  category: gatekeeper
+  rest:
+  - cancel_verification_v1_gatekeeper_jobs__job_id__cancel_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: get_proof
+  category: gatekeeper
+  rest:
+  - get_proof_v1_gatekeeper_proofs__proof_id__get
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: verify_proof
+  category: gatekeeper
+  rest:
+  - verify_proof_v1_gatekeeper_proofs_verify_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: atlas_discover
+  category: marketplace
+  rest:
+  - atlas_discover_v1_marketplace_atlas_discover_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: atlas_preflight
+  category: marketplace
+  rest:
+  - atlas_preflight_v1_marketplace_atlas_preflight_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: atlas_broker
+  category: marketplace
+  rest:
+  - atlas_broker_v1_marketplace_atlas_broker_post
+  binding: 'name-prefix match: MCP tool name == OpenAPI operationId prefix (FastAPI generates operationId as <function>_<path>_<method>)'
+  confidence: high
+- tool: create_api_key
+  category: paywall
+  rest:
+  - create_billing_api_key_v1_billing_keys_post
+  - create_api_key_deprecated_v1_infra_keys_post
+  binding: 'semantic: the tool creates an API key; POST /v1/billing/keys is the current route and POST /v1/infra/keys
+    is the route the contract marks ''Deprecated: self-service key creation moved to /v1/billing/keys'''
+  confidence: medium
+mcp_only:
+- tool: stripe_list_customers
+  category: stripe
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: stripe_create_customer
+  category: stripe
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: stripe_list_products
+  category: stripe
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: stripe_create_product
+  category: stripe
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: stripe_list_prices
+  category: stripe
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: stripe_create_price
+  category: stripe
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: stripe_create_payment_link
+  category: stripe
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: stripe_list_invoices
+  category: stripe
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: stripe_create_invoice
+  category: stripe
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: stripe_list_subscriptions
+  category: stripe
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: stripe_cancel_subscription
+  category: stripe
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: stripe_create_refund
+  category: stripe
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: stripe_retrieve_balance
+  category: stripe
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: github_list_repos
+  category: github
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: github_get_repo
+  category: github
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: github_list_issues
+  category: github
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: github_create_issue
+  category: github
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: github_list_pull_requests
+  category: github
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: github_get_pull_request
+  category: github
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: github_create_pull_request
+  category: github
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: github_list_commits
+  category: github
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: github_get_file_contents
+  category: github
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: github_search_code
+  category: github
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: pg_query
+  category: postgres
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: pg_execute
+  category: postgres
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: pg_list_tables
+  category: postgres
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: pg_describe_table
+  category: postgres
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: pg_explain_query
+  category: postgres
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+- tool: pg_list_schemas
+  category: postgres
+  reason: connector tool (Stripe/GitHub/PostgreSQL) — reachable only through POST /v1/batch tool dispatch; no dedicated
+    REST route in the contract
+rest_only:
+- livez_livez_get
+- readyz_readyz_get
+- health_v1_health_get
+- pricing_list_v1_pricing_get
+- pricing_summary_v1_pricing_summary_get
+- pricing_tiers_v1_pricing_tiers_get
+- pricing_detail_v1_pricing__tool__get
+- execute_v1_execute_post
+- batch_v1_batch_post
+- event_stream_v1_events_stream_get
+- websocket_upgrade_fallback_v1_ws_get
+- onboarding_handler_v1_onboarding_get
+- register_v1_register_post
+- checkout_success_v1_checkout_success_get
+- checkout_cancelled_v1_checkout_cancelled_get
+- create_checkout_v1_checkout_post
+- stripe_webhook_v1_stripe_webhook_post
+- list_billing_api_keys_v1_billing_keys_get
+- _redirect_health_health_get
+- _redirect_pricing_pricing_get
+- _redirect_pricing_tool_pricing__tool__get
+- _redirect_execute_execute_post
+- signing_key_v1_signing_key_get

@@ -1,0 +1,158 @@
+generated: '2026-09-19'
+method: searched
+source: https://github.com/mirni/a2a/blob/main/docs/api-reference.md + https://github.com/mirni/a2a/tree/main/docs/adr
+  (005 idempotency, 009 auth/rate-limit, 011 refund fee) + openapi/_original/greenhelix-net-openapi.json + live
+  headers observed 2026-09-19
+description: 'Cross-cutting request/response semantics of the A2A Commerce Gateway: API-key auth with x402 fallback,
+  body-field idempotency keys on payment intents, limit/offset pagination with a cursor on the catalog, X-Request-ID
+  tracing, RFC 9457 errors, X-RateLimit-* signaling, RFC 8594 sunset headers, and per-surface reversibility.'
+base_url: https://api.greenhelix.net
+api_style: REST over HTTPS, JSON requests and responses (FastAPI); one route per tool under /v1/<domain>/…, plus
+  POST /v1/batch for multi-call dispatch
+authentication:
+  scheme: 'Opaque API key a2a_{tier}_{24hex} as Authorization: Bearer (preferred) or X-API-Key header; x402 X-PAYMENT
+    proof as a stateless alternative'
+  docs: https://github.com/mirni/a2a/blob/main/docs/api-reference.md#1-authentication
+  detail: authentication/greenhelix-net-authentication.yml
+idempotency:
+  supported: true
+  coverage: partial
+  mechanism: optional idempotency_key request-body field (string, maxLength 256) on payment-intent creation and
+    gatekeeper verification submission; reuse returns 409 duplicate_intent. ADR-005 additionally describes a Stripe-compatible
+    Idempotency-Key HEADER on mutating endpoints with 24h retention and 409 idempotency_key_reused on fingerprint
+    mismatch, but no operation in the served contract declares that header.
+  scope:
+  - create_intent_v1_payments_intents_post
+  - submit_verification_v1_gatekeeper_jobs_post
+  scope_note: '2 of 65 write operations declare idempotency_key in the contract. The api-reference ''best practices''
+    also name create_escrow and create_split_intent, whose request schemas do not carry the field. capture is protected
+    differently: an atomic PENDING->CAPTURED compare-and-set makes a double capture return 409 invalid_state (ADR-008).'
+  retention: 24 hours (ADR-005; 'configurable per-product')
+  conflict_behavior: '409 duplicate_intent (''Intent with this idempotency key already exists''); internal usage
+    recording is deduplicated on {correlation_id}:{tool_name} (batch: {correlation_id}:{batch_index}:{tool_name})'
+  sdk_behavior: 'ADR-005: ''SDKs auto-generate keys from UUID4 on every request'''
+  docs: https://github.com/mirni/a2a/blob/main/docs/api-reference.md#8-idempotency
+pagination:
+  style: offset (limit/offset) on list operations; opaque cursor on GET /v1/pricing
+  request_params:
+    limit: default 50 on lists; negative values ignored on /v1/pricing
+    offset: default 0
+    cursor: opaque next_cursor from the previous /v1/pricing page
+    since: unix timestamp filter on 5 operations
+  response_fields:
+    total: int
+    limit: int
+    offset: int
+    has_more: bool (observed on /v1/pricing)
+  docs: https://github.com/mirni/a2a/blob/main/docs/api-reference.md#get-v1pricing
+field_expansion:
+  supported: false
+metadata:
+  supported: true
+  mechanism: free-form `metadata` object on CreateIntentRequest, CreateEscrowRequest, CreatePerformanceEscrowRequest
+request_tracing:
+  header: X-Request-ID
+  note: 'correlation id on every response (observed: x-request-id: 7d352761-…); ADR-004 says the RFC 9457 instance
+    carries ?request_id=, observed instances carry the bare path'
+versioning:
+  style: URL path /v1; app semver in /v1/health
+  detail: lifecycle/greenhelix-net-lifecycle.yml
+error_envelope:
+  format: RFC 9457 application/problem+json {type,title,status,detail,instance}
+  detail: errors/greenhelix-net-problem-types.yml
+rate_limiting:
+  headers:
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - X-RateLimit-Reset (seconds)
+  status: 429
+  detail: rate-limits/greenhelix-net-rate-limits.yml
+deprecation_signaling:
+  rfc8594: true
+  observed: 'Deprecation: true, Sunset: Thu, 01 Oct 2026 00:00:00 GMT, Link rel=sunset on the removed POST /v1/execute'
+security_headers_observed:
+- 'strict-transport-security: max-age=31536000; includeSubDomains; preload'
+- 'content-security-policy: default-src ''none'''
+- 'x-content-type-options: nosniff'
+- 'x-frame-options: DENY'
+- 'referrer-policy: no-referrer'
+- 'permissions-policy: geolocation=(), camera=(), microphone=()'
+dry_run:
+  supported: partial
+  note: GET /v1/billing/estimate (estimate_cost) prices a call before it is made; POST /v1/infra/webhooks/{id}/test
+    sends a ping. No general dry-run flag on write operations.
+money:
+  amounts: number or decimal string with up to 8 fractional digits (pattern in CreateIntentRequest/CreateEscrowRequest);
+    ADR-006 decimal money
+  currencies: CREDITS (default), USD, EUR, GBP, BTC, ETH
+  gateway_fee: 2% on payment intents; 1.5% (min 0.01, max 10.0 credits) on escrow
+reversibility:
+  grade: documented
+  grade_note: Reversal operations exist for the main money-moving surfaces and their state preconditions are documented,
+    but NO time window is stated for any of them (an escrow's timeout_hours is an expiry the creator sets, not a
+    reversal window). Grade stays at `documented`; no window is invented.
+  docs: https://github.com/mirni/a2a/blob/main/docs/api-reference.md#32-payments
+  surfaces:
+  - write: create_intent_v1_payments_intents_post / capture_intent_v1_payments_intents__intent_id__capture_post
+      / partial_capture_v1_payments_intents__intent_id__partial_capture_post
+    reversal: refund_intent_v1_payments_intents__intent_id__refund_post
+    semantics: voids if the intent is pending, reverse-transfers if settled; response status `refunded`
+    window: null
+    fee_note: 'CONTRADICTORY DOCS, both verbatim: api-reference refund_intent says ''the gateway fee originally
+      charged by create_intent is credited back to the payer''s CREDITS wallet''; ADR-011 (2026-04-10, Accepted)
+      says ''The gateway retains the 2% gateway fee on refund'' and that every refund response carries fee_refunded:false,
+      fee_retained and a fee_policy object citing ADR-011. The ADR is the later, recorded decision; the reference
+      page was not updated.'
+  - write: refund of a settlement
+    reversal: refund_settlement_v1_payments_settlements__settlement_id__refund_post
+    semantics: RefundSettlementRequest; reverses a settled transfer
+    window: null
+  - write: create_escrow_v1_payments_escrows_post / create_performance_escrow_v1_payments_escrows_performance_post
+    reversal: cancel_escrow_v1_payments_escrows__escrow_id__cancel_post
+    semantics: cancels a HELD escrow and refunds the payer (status held -> cancelled); release_escrow_v1_payments_escrows__escrow_id__release_post
+      is the forward path (held -> released) and is not reversible
+    window: none stated; timeout_hours on creation sets an automatic expiration of the hold, which is not a reversal
+      window
+  - write: create_subscription_v1_payments_subscriptions_post
+    reversal: cancel_subscription_v1_payments_subscriptions__subscription_id__cancel_post
+    semantics: cancels an active or suspended subscription; reactivate_subscription_v1_payments_subscriptions__subscription_id__reactivate_post
+      restores a SUSPENDED (not a cancelled) subscription
+    window: null
+  - write: deposit_v1_billing_wallets__agent_id__deposit_post
+    reversal: withdraw_v1_billing_wallets__agent_id__withdraw_post
+    semantics: withdrawal is a separate debit, not a reversal of a specific deposit; credit purchases via Stripe
+      Checkout have no documented refund path
+    window: null
+  - write: freeze_wallet_v1_billing_wallets__agent_id__freeze_post
+    reversal: unfreeze_wallet_v1_billing_wallets__agent_id__unfreeze_post
+    window: null
+  - write: create_billing_api_key_v1_billing_keys_post
+    reversal: revoke_api_key_v1_infra_keys_revoke_post (and rotate_key_v1_infra_keys_rotate_post, which requires
+      the X-Rotate-Confirmation header)
+    window: null
+  - write: register_service_v1_marketplace_services_post
+    reversal: deactivate_service_v1_marketplace_services__service_id__deactivate_post
+    window: null
+  - write: register_server_v1_trust_servers_post
+    reversal: delete_server_v1_trust_servers__server_id__delete
+    window: null
+  - write: register_webhook_v1_infra_webhooks_post
+    reversal: delete_webhook_v1_infra_webhooks__webhook_id__delete (deactivates)
+    window: null
+  - write: submit_verification_v1_gatekeeper_jobs_post
+    reversal: cancel_verification_v1_gatekeeper_jobs__job_id__cancel_post
+    window: null
+  - write: backup_database_v1_infra_databases__database__backup_post
+    reversal: restore_database_v1_infra_databases__database__restore_post (pro tier; restores from a named backup)
+    window: null
+  - write: open_dispute_v1_disputes_post
+    reversal: resolve_dispute_v1_disputes__dispute_id__resolve_post
+    semantics: dispute lifecycle open -> respond -> resolve; the agent card states a '7-day response deadline' —
+      a deadline on the counterparty's response, not a reversal window
+    window: null
+  irreversible:
+  - release_escrow_v1_payments_escrows__escrow_id__release_post (funds move to the payee)
+  - capture after refund
+  - send_message_v1_messaging_messages_post
+  - publish_event_v1_infra_events_post
+  - ingest_metrics / submit_metrics (attestations are 'never deleted' — PRD-014)

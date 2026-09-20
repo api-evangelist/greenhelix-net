@@ -1,0 +1,26 @@
+generated: '2026-09-19'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: greenhelix.net
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 21 02:25:35 2026 GMT
+  hsts: false
+- host: api.greenhelix.net
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 21 02:25:35 2026 GMT
+  hsts: null
+- host: sandbox.greenhelix.net
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 21 02:25:35 2026 GMT
+  hsts: null
+domains:
+- domain: greenhelix.net
+  dnssec: true
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: none

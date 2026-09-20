@@ -1,0 +1,325 @@
+generated: '2026-09-19'
+method: searched
+source: https://github.com/mirni/a2a/blob/main/docs/api-reference.md#5-error-codes (36-row error table) + openapi/_original/greenhelix-net-openapi.json
+  ErrorResponse schema + live responses observed on 2026-09-19
+docs: https://github.com/mirni/a2a/blob/main/docs/api-reference.md#5-error-codes
+format: rfc9457
+envelope:
+  schema: ErrorResponse
+  media_type: application/problem+json
+  fields:
+  - name: type
+    description: Absolute URI under https://api.greenhelix.net/errors/<code>
+  - name: title
+  - name: status
+  - name: detail
+  - name: instance
+    description: request path (ADR-004 says it includes ?request_id=; observed bodies carry the bare path and the
+      id is in the X-Request-ID header)
+  - name: code
+    description: stable snake_case identifier SDKs match on (ADR-004; not present in the observed 401/404/410 bodies,
+      which carry only the five RFC fields)
+  example_observed:
+    type: https://api.greenhelix.net/errors/missing-key
+    title: Unauthorized
+    status: 401
+    detail: Missing API key
+    instance: /v1/billing/wallets/example-agent/balance
+consistency_gap: >-
+  Three shapes are documented for the same errors: (1) the RFC 9457 body actually served (observed on every non-2xx),
+  (2) the legacy `{success:false, error:{code,message}, request_id}` envelope the api-reference §5 still shows for
+  the removed /v1/execute dispatcher, and (3) FastAPI's HTTPValidationError on 422. Live type URIs use hyphens (missing-key,
+  endpoint-removed) while the documented codes use underscores (missing_key); the type URIs do not dereference (the
+  /errors/ path 404s). The contract declares only 200 and 422 responses, so none of the 401/402/403/404/409/410/429
+  problem types below appear in the OpenAPI.
+problem_types:
+- status: 400
+  code: bad_request
+  type: https://api.greenhelix.net/errors/bad_request
+  title: Invalid JSON body or missing tool field
+  remediation: Check request format
+  retryable: false
+  source: api-reference §5
+- status: 400
+  code: unknown_tool
+  type: https://api.greenhelix.net/errors/unknown_tool
+  title: Tool name not found in catalog
+  remediation: Verify tool name against /v1/pricing
+  retryable: false
+  source: api-reference §5
+- status: 400
+  code: missing_parameter
+  type: https://api.greenhelix.net/errors/missing_parameter
+  title: Required parameter(s) not provided
+  remediation: Include all required parameters
+  retryable: false
+  source: api-reference §5
+- status: 400
+  code: validation_error
+  type: https://api.greenhelix.net/errors/validation_error
+  title: Input validation failed
+  remediation: Check parameter types and constraints
+  retryable: false
+  source: api-reference §5
+- status: 400
+  code: invalid_metric
+  type: https://api.greenhelix.net/errors/invalid_metric
+  title: Invalid metric name for leaderboard/search
+  remediation: Use valid metric names
+  retryable: false
+  source: api-reference §5
+- status: 400
+  code: payment_error
+  type: https://api.greenhelix.net/errors/payment_error
+  title: Generic payment engine error
+  remediation: Check payment parameters
+  retryable: false
+  source: api-reference §5
+- status: 401
+  code: missing_key
+  type: https://api.greenhelix.net/errors/missing_key
+  title: No API key provided
+  remediation: 'Add Authorization: Bearer <key> header'
+  retryable: false
+  source: api-reference §5
+- status: 401
+  code: invalid_key
+  type: https://api.greenhelix.net/errors/invalid_key
+  title: API key invalid, not found, or revoked
+  remediation: Obtain a new key via create_api_key
+  retryable: false
+  source: api-reference §5
+- status: 401
+  code: authentication_error
+  type: https://api.greenhelix.net/errors/authentication_error
+  title: General authentication failure
+  remediation: Check credentials
+  retryable: false
+  source: api-reference §5
+- status: 402
+  code: insufficient_balance
+  type: https://api.greenhelix.net/errors/insufficient_balance
+  title: Not enough credits for tool call
+  remediation: Deposit credits via deposit tool
+  retryable: false
+  source: api-reference §5
+- status: 402
+  code: payment_required
+  type: https://api.greenhelix.net/errors/payment_required
+  title: x402 payment required (no API key, x402 enabled)
+  remediation: Attach X-PAYMENT header
+  retryable: false
+  source: api-reference §5
+- status: 402
+  code: payment_verification_failed
+  type: https://api.greenhelix.net/errors/payment_verification_failed
+  title: x402 payment proof invalid
+  remediation: Check proof format and signature
+  retryable: false
+  source: api-reference §5
+- status: 402
+  code: payment_replay_detected
+  type: https://api.greenhelix.net/errors/payment_replay_detected
+  title: x402 nonce already used
+  remediation: Generate a new nonce
+  retryable: false
+  source: api-reference §5
+- status: 403
+  code: insufficient_tier
+  type: https://api.greenhelix.net/errors/insufficient_tier
+  title: Agent tier too low for tool
+  remediation: Upgrade tier or use an allowed tool
+  retryable: false
+  source: api-reference §5
+- status: 403
+  code: forbidden
+  type: https://api.greenhelix.net/errors/forbidden
+  title: Agent tried to create key for another agent
+  remediation: Only admin can create keys for others
+  retryable: false
+  source: api-reference §5
+- status: 404
+  code: service_not_found
+  type: https://api.greenhelix.net/errors/service_not_found
+  title: Marketplace service not found
+  remediation: Verify service ID
+  retryable: false
+  source: api-reference §5
+- status: 404
+  code: server_not_found
+  type: https://api.greenhelix.net/errors/server_not_found
+  title: Trust server not found
+  remediation: Verify server ID
+  retryable: false
+  source: api-reference §5
+- status: 404
+  code: intent_not_found
+  type: https://api.greenhelix.net/errors/intent_not_found
+  title: Payment intent not found
+  remediation: Verify intent ID
+  retryable: false
+  source: api-reference §5
+- status: 404
+  code: escrow_not_found
+  type: https://api.greenhelix.net/errors/escrow_not_found
+  title: Escrow not found
+  remediation: Verify escrow ID
+  retryable: false
+  source: api-reference §5
+- status: 404
+  code: wallet_not_found
+  type: https://api.greenhelix.net/errors/wallet_not_found
+  title: No wallet for this agent
+  remediation: Create wallet via create_wallet
+  retryable: false
+  source: api-reference §5
+- status: 404
+  code: subscription_not_found
+  type: https://api.greenhelix.net/errors/subscription_not_found
+  title: Subscription not found
+  remediation: Verify subscription ID
+  retryable: false
+  source: api-reference §5
+- status: 404
+  code: agent_not_found
+  type: https://api.greenhelix.net/errors/agent_not_found
+  title: Agent identity not found
+  remediation: Register via POST /v1/register or POST /v1/identity/agents
+  retryable: false
+  source: api-reference §5
+- status: 404
+  code: dispute_not_found
+  type: https://api.greenhelix.net/errors/dispute_not_found
+  title: Dispute not found
+  remediation: Verify dispute ID
+  retryable: false
+  source: api-reference §5
+- status: 404
+  code: not_found
+  type: https://api.greenhelix.net/errors/not_found
+  title: Generic resource not found
+  remediation: Check resource identifier
+  retryable: false
+  source: api-reference §5
+- status: 409
+  code: invalid_state
+  type: https://api.greenhelix.net/errors/invalid_state
+  title: Resource in wrong state for operation
+  remediation: Check current state before operating
+  retryable: false
+  source: api-reference §5
+- status: 409
+  code: duplicate_intent
+  type: https://api.greenhelix.net/errors/duplicate_intent
+  title: Duplicate idempotency key for intent
+  remediation: Use a unique idempotency key
+  retryable: false
+  source: api-reference §5
+- status: 409
+  code: duplicate_service
+  type: https://api.greenhelix.net/errors/duplicate_service
+  title: Service with same ID already exists
+  remediation: Use a different service name
+  retryable: false
+  source: api-reference §5
+- status: 409
+  code: agent_already_exists
+  type: https://api.greenhelix.net/errors/agent_already_exists
+  title: Agent ID already registered
+  remediation: Use the existing agent
+  retryable: false
+  source: api-reference §5
+- status: 409
+  code: dispute_state_error
+  type: https://api.greenhelix.net/errors/dispute_state_error
+  title: Dispute in wrong state for operation
+  remediation: Check dispute status
+  retryable: false
+  source: api-reference §5
+- status: 429
+  code: rate_limit_exceeded
+  type: https://api.greenhelix.net/errors/rate_limit_exceeded
+  title: Hourly or per-tool rate limit exceeded
+  remediation: Wait and retry; check X-RateLimit-Reset
+  retryable: true
+  source: api-reference §5
+- status: 429
+  code: spend_cap_exceeded
+  type: https://api.greenhelix.net/errors/spend_cap_exceeded
+  title: Budget spending cap reached
+  remediation: Increase cap via set_budget_cap
+  retryable: true
+  source: api-reference §5
+- status: 500
+  code: pricing_error
+  type: https://api.greenhelix.net/errors/pricing_error
+  title: Internal pricing calculation error
+  remediation: Contact support
+  retryable: true
+  source: api-reference §5
+- status: 500
+  code: internal_error
+  type: https://api.greenhelix.net/errors/internal_error
+  title: Unexpected server error
+  remediation: Retry; contact support if persistent
+  retryable: true
+  source: api-reference §5
+- status: 501
+  code: not_implemented
+  type: https://api.greenhelix.net/errors/not_implemented
+  title: Tool cataloged but not yet implemented
+  remediation: Check for updates
+  retryable: false
+  source: api-reference §5
+- status: 503
+  code: service_error
+  type: https://api.greenhelix.net/errors/service_error
+  title: Rate limit service unavailable
+  remediation: Retry after brief delay
+  retryable: true
+  source: api-reference §5
+- status: 404
+  code: http-error
+  type: https://api.greenhelix.net/errors/http-error
+  title: Not Found
+  remediation: null
+  retryable: false
+  source: 'observed live 2026-09-19: GET /'
+- status: 401
+  code: missing-key
+  type: https://api.greenhelix.net/errors/missing-key
+  title: Unauthorized
+  remediation: null
+  retryable: false
+  source: 'observed live 2026-09-19: GET /v1/billing/wallets/{agent_id}/balance with no credentials — detail ''Missing
+    API key'''
+- status: 401
+  code: authentication-error
+  type: https://api.greenhelix.net/errors/authentication-error
+  title: Unauthorized
+  remediation: null
+  retryable: false
+  source: 'observed live 2026-09-19: same route with an unknown a2a_free_ key — detail ''API key not found'''
+- status: 403
+  code: forbidden
+  type: https://api.greenhelix.net/errors/forbidden
+  title: Forbidden
+  remediation: null
+  retryable: false
+  source: 'observed live 2026-09-19: GET /v1/metrics — detail ''Metrics requires enterprise tier or allowed IP'''
+- status: 410
+  code: endpoint-removed
+  type: https://api.greenhelix.net/errors/endpoint-removed
+  title: Gone
+  remediation: null
+  retryable: false
+  source: 'observed live 2026-09-19: POST /v1/execute — detail ''POST /v1/execute has been removed. Use the dedicated
+    REST endpoints under /v1/<domain>/<operation> instead.'''
+- status: 422
+  code: validation_error
+  type: null
+  title: Validation Error
+  schema: 'HTTPValidationError {detail: [ValidationError {loc, msg, type}]}'
+  remediation: FastAPI request validation; declared on 105 of 132 operations — the only 4xx the contract declares
+  retryable: false
+  source: openapi components.schemas.HTTPValidationError

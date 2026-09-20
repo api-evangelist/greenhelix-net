@@ -1,0 +1,48 @@
+generated: '2026-09-19'
+method: probed
+source: Conventional-path probes on https://www.greenhelix.net (2026-09-19) + the harvested well-known/, security/,
+  lifecycle/ and conformance/ artifacts + the public docs in https://github.com/mirni/a2a/tree/main/docs
+signals: {}
+probed:
+- url: https://www.greenhelix.net/accessibility
+  status: 404
+- url: https://www.greenhelix.net/accessibility/vpat
+  status: 404
+- url: https://www.greenhelix.net/legal/subprocessors
+  status: 404
+- url: https://www.greenhelix.net/legal/dpa
+  status: 404
+- url: https://www.greenhelix.net/privacy/requests
+  status: 404
+- url: https://www.greenhelix.net/transparency
+  status: 404
+- url: https://www.greenhelix.net/security/sbom
+  status: 404
+- url: https://www.greenhelix.net/docs/data-residency
+  status: 404
+- url: https://www.greenhelix.net/ai/transparency
+  status: 404
+- url: https://www.greenhelix.net/legal/report-content
+  status: 404
+- url: https://www.greenhelix.net/privacy
+  status: 404
+- url: https://www.greenhelix.net/terms
+  status: 404
+- url: https://www.greenhelix.net/security
+  status: 404
+- url: https://www.greenhelix.net/legal
+  status: 404
+- url: https://greenhelix.net/legal
+  status: 522
+  note: the legal_info_url named in the provider's own ai-plugin.json
+note: >-
+  No horizontal-regulatory signal is published: no accessibility statement, subprocessor list, DPA, DSAR route,
+  transparency report, SBOM, support-lifetime statement or data-residency page, and no privacy policy or terms at
+  all (the ai-plugin.json points legal_info_url at https://greenhelix.net/legal, which 522s on the apex and 404s
+  on www). The repo carries internal policy documents (docs/policies/information-security-policy.md, incident-response-plan.md,
+  mfa-requirements.md, secrets-management-policy.md), a SOC 2 certification PLAN (docs/infra/SOC2_CERTIFICATION_PLAN.md
+  — a plan, not a report) and a data-retention PRD (PRD-014: hot 60 days, warm 365 days, audit log 90 days, attestations
+  never deleted) — these are engineering documents in a source repo, not published commitments to customers, so
+  no signal is recorded from them. The www robots.txt blocks GPTBot, ClaudeBot, CCBot, Google-Extended and other
+  AI crawlers, and the API host's robots.txt carries Cloudflare's Content Signals preamble (search / ai-input /
+  ai-train) with no signal values set. An empty signals map is the measurement.
