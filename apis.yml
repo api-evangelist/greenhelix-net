@@ -19,6 +19,20 @@ created: '2026-09-19'
 modified: '2026-09-19'
 tags:
 - Agents
+- Agentic Commerce
+- Payments
+- Escrow
+- Billing
+- Marketplace
+- Identity
+- Trust
+- Messaging
+- Webhook
+- MCP
+- A2A
+- x402
+tags_raw:
+- Agents
 - Agent Commerce
 - Payments
 - Escrow
@@ -42,6 +56,16 @@ apis:
   humanURL: https://api.greenhelix.net/docs
   baseURL: https://api.greenhelix.net
   tags:
+  - Payments
+  - Escrow
+  - Billing
+  - Identity
+  - Marketplace
+  - Trust
+  - Messaging
+  - Disputes
+  - Webhook
+  tags_raw:
   - Payments
   - Escrow
   - Billing
