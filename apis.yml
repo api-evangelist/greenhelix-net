@@ -14,6 +14,22 @@ x-type: company
 x-source: harvest:a2a-registry
 x-tier: profiled
 x-tier-reason: enrichment pass 2026-09-19 — real OpenAPI, agent card, MCP server, SDKs and tool catalog found
+deliveryModel:
+  model: saas
+  license_evidence:
+    not_product:
+    - mirni/a2a
+  open_source: unknown
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: low
+  source:
+  - openapi
+  - pricing
+  - repository-not-product
+  generated: '2026-09-25'
+  method: derived
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
@@ -46,61 +62,454 @@ tags_raw:
 - A2A
 - x402
 apis:
-- aid: greenhelix-net:a2a-commerce-gateway-api
-  name: A2A Commerce Gateway API
-  description: 'REST API for agent-to-agent commerce: billing and wallets, payment intents and escrow, subscriptions,
-    identity and reputation, marketplace, trust scoring, messaging and negotiation, disputes, webhooks, event bus,
-    API keys and database operations. 114 paths / 132 operations under /v1 with a global choice of Bearer API key,
-    X-API-Key or x402 X-PAYMENT security. The former POST /v1/execute tool dispatcher is 410 Gone (sunset 2026-10-01);
-    POST /v1/batch remains for multi-tool dispatch and is how the MCP server invokes tools.'
+- aid: greenhelix-net:greenhelix-net-batch-api
+  name: Green Helix Batch API
+  description: The Batch API from Green Helix — 1 operation(s) for batch.
   humanURL: https://api.greenhelix.net/docs
   baseURL: https://api.greenhelix.net
   tags:
-  - Payments
-  - Escrow
-  - Billing
-  - Identity
-  - Marketplace
-  - Trust
-  - Messaging
-  - Disputes
-  - Webhook
-  tags_raw:
-  - Payments
-  - Escrow
-  - Billing
-  - Identity
-  - Marketplace
-  - Trust
-  - Messaging
-  - Disputes
-  - Webhooks
+  - Batch
   properties:
   - type: OpenAPI
-    url: openapi/greenhelix-net-a2a-commerce-gateway-openapi.yml
-  - type: OpenAPI
-    url: https://api.greenhelix.net/v1/openapi.json
-    name: Provider-hosted OpenAPI 3.1 (verbatim copy in openapi/_original/)
-  - type: Overlay
-    url: overlays/greenhelix-net-a2a-commerce-gateway-overlay.yaml
+    url: openapi/greenhelix-net-batch-api-openapi.yml
   - type: Documentation
     url: https://www.greenhelix.net/docs.html
   - type: APIReference
     url: https://api.greenhelix.net/docs
   - type: APIReference
     url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
-    name: Tool-by-tool reference, error table, rate limits, idempotency
   - type: ToolCrosswalk
     url: mcp/greenhelix-net-tool-crosswalk.yml
   - type: Sandbox
     url: https://www.greenhelix.net/docs.html#sandbox
-    name: Sandbox docs — host https://sandbox.greenhelix.net (its root answers an RFC 9457 404; use /v1/health)
+- aid: greenhelix-net:greenhelix-net-billing-api
+  name: Green Helix Billing API
+  description: The billing API from Green Helix — 18 operation(s) for billing.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - billing
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-billing-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-checkout-api
+  name: Green Helix Checkout API
+  description: The Checkout API from Green Helix — 3 operation(s) for checkout.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - Checkout
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-checkout-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-disputes-api
+  name: Green Helix Disputes API
+  description: The disputes API from Green Helix — 4 operation(s) for disputes.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - disputes
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-disputes-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-events-api
+  name: Green Helix Events API
+  description: The Events API from Green Helix — 1 operation(s) for events.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - Events
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-events-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-execute-api
+  name: Green Helix Execute API
+  description: The Execute API from Green Helix — 2 operation(s) for execute.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - Execute
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-execute-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-gatekeeper-api
+  name: Green Helix Gatekeeper API
+  description: The gatekeeper API from Green Helix — 5 operation(s) for gatekeeper.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - gatekeeper
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-gatekeeper-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-health-api
+  name: Green Helix Health API
+  description: The Health API from Green Helix — 2 operation(s) for health.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - Health
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-health-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-identity-api
+  name: Green Helix Identity API
+  description: The identity API from Green Helix — 15 operation(s) for identity.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - identity
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-identity-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-infra-api
+  name: Green Helix Infra API
+  description: The infra API from Green Helix — 15 operation(s) for infra.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - infra
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-infra-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-livez-api
+  name: Green Helix Livez API
+  description: The Livez API from Green Helix — 1 operation(s) for livez.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - Livez
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-livez-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-marketplace-api
+  name: Green Helix Marketplace API
+  description: The marketplace API from Green Helix — 10 operation(s) for marketplace.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - marketplace
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-marketplace-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-messaging-api
+  name: Green Helix Messaging API
+  description: The messaging API from Green Helix — 2 operation(s) for messaging.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - messaging
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-messaging-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-onboarding-api
+  name: Green Helix Onboarding API
+  description: The Onboarding API from Green Helix — 1 operation(s) for onboarding.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - Onboarding
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-onboarding-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-payments-api
+  name: Green Helix Payments API
+  description: The payments API from Green Helix — 19 operation(s) for payments.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - payments
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-payments-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-pricing-api
+  name: Green Helix Pricing API
+  description: The Pricing API from Green Helix — 6 operation(s) for pricing.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - Pricing
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-pricing-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-readyz-api
+  name: Green Helix Readyz API
+  description: The Readyz API from Green Helix — 1 operation(s) for readyz.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - Readyz
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-readyz-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-register-api
+  name: Green Helix Register API
+  description: The Register API from Green Helix — 1 operation(s) for register.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - Register
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-register-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-signing-key-api
+  name: Green Helix Signing Key API
+  description: The Signing Key API from Green Helix — 1 operation(s) for signing key.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - Signing Key
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-signing-key-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-stripe-webhook-api
+  name: Green Helix Stripe Webhook API
+  description: The Stripe Webhook API from Green Helix — 1 operation(s) for stripe webhook.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - Stripe Webhook
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-stripe-webhook-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-trust-api
+  name: Green Helix Trust API
+  description: The trust API from Green Helix — 4 operation(s) for trust.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - trust
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-trust-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
+- aid: greenhelix-net:greenhelix-net-ws-api
+  name: Green Helix Ws API
+  description: The Ws API from Green Helix — 1 operation(s) for ws.
+  humanURL: https://api.greenhelix.net/docs
+  baseURL: https://api.greenhelix.net
+  tags:
+  - Ws
+  properties:
+  - type: OpenAPI
+    url: openapi/greenhelix-net-ws-api-openapi.yml
+  - type: Documentation
+    url: https://www.greenhelix.net/docs.html
+  - type: APIReference
+    url: https://api.greenhelix.net/docs
+  - type: APIReference
+    url: https://github.com/mirni/a2a/blob/main/docs/api-reference.md
+  - type: ToolCrosswalk
+    url: mcp/greenhelix-net-tool-crosswalk.yml
+  - type: Sandbox
+    url: https://www.greenhelix.net/docs.html#sandbox
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/greenhelix-net-a2a-commerce-gateway-overlay.yaml
 - type: DomainSecurity
   url: security/greenhelix-net-domain-security.yml
 - type: Authentication

@@ -1,0 +1,867 @@
+openapi: 3.2.0
+info:
+  title: Greenhelix Net Billing API
+  version: 1.4.10
+  description: 'Operations tagged billing across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.greenhelix.net
+  description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
+- url: https://sandbox.greenhelix.net
+  description: 'Sandbox — identical surface, databases reset on every deploy (docs.html; probed 2026-09-19: /v1/health 200, same 1.4.10 build)'
+security:
+- BearerAuth: []
+- ApiKeyAuth: []
+- X402Payment: []
+tags:
+- name: Billing
+paths:
+  /v1/billing/wallets/{agent_id}/balance:
+    get:
+      tags:
+      - Billing
+      summary: Get Balance
+      operationId: get_balance_v1_billing_wallets__agent_id__balance_get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: currency
+        in: query
+        required: false
+        schema:
+          type: string
+          default: CREDITS
+          title: Currency
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/wallets:
+    post:
+      tags:
+      - Billing
+      summary: Create Wallet
+      operationId: create_wallet_v1_billing_wallets_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWalletRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/wallets/{agent_id}/deposit:
+    post:
+      tags:
+      - Billing
+      summary: Deposit
+      operationId: deposit_v1_billing_wallets__agent_id__deposit_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepositRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/wallets/{agent_id}/withdraw:
+    post:
+      tags:
+      - Billing
+      summary: Withdraw
+      operationId: withdraw_v1_billing_wallets__agent_id__withdraw_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WithdrawRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/wallets/{agent_id}/freeze:
+    post:
+      tags:
+      - Billing
+      summary: Freeze Wallet
+      operationId: freeze_wallet_v1_billing_wallets__agent_id__freeze_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/wallets/{agent_id}/unfreeze:
+    post:
+      tags:
+      - Billing
+      summary: Unfreeze Wallet
+      operationId: unfreeze_wallet_v1_billing_wallets__agent_id__unfreeze_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/wallets/{agent_id}/transactions:
+    get:
+      tags:
+      - Billing
+      summary: Get Transactions
+      operationId: get_transactions_v1_billing_wallets__agent_id__transactions_get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 100
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/wallets/{agent_id}/usage:
+    get:
+      tags:
+      - Billing
+      summary: Get Usage Summary
+      operationId: get_usage_summary_v1_billing_wallets__agent_id__usage_get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: since
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Since
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/wallets/{agent_id}/analytics:
+    get:
+      tags:
+      - Billing
+      summary: Get Service Analytics
+      operationId: get_service_analytics_v1_billing_wallets__agent_id__analytics_get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: since
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Since
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/wallets/{agent_id}/revenue:
+    get:
+      tags:
+      - Billing
+      summary: Get Revenue Report
+      operationId: get_revenue_report_v1_billing_wallets__agent_id__revenue_get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/wallets/{agent_id}/timeseries:
+    get:
+      tags:
+      - Billing
+      summary: Get Metrics Timeseries
+      operationId: get_metrics_timeseries_v1_billing_wallets__agent_id__timeseries_get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: interval
+        in: query
+        required: false
+        schema:
+          type: string
+          default: hour
+          title: Interval
+      - name: since
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Since
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 24
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/wallets/{agent_id}/budget:
+    put:
+      tags:
+      - Billing
+      summary: Set Budget Cap
+      operationId: set_budget_cap_v1_billing_wallets__agent_id__budget_put
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BudgetCapRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Billing
+      summary: Get Budget Status
+      operationId: get_budget_status_v1_billing_wallets__agent_id__budget_get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/leaderboard:
+    get:
+      tags:
+      - Billing
+      summary: Get Agent Leaderboard
+      operationId: get_agent_leaderboard_v1_billing_leaderboard_get
+      parameters:
+      - name: metric
+        in: query
+        required: false
+        schema:
+          type: string
+          default: spend
+          title: Metric
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 10
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/discounts:
+    get:
+      tags:
+      - Billing
+      summary: Get Volume Discount
+      operationId: get_volume_discount_v1_billing_discounts_get
+      parameters:
+      - name: agent_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: tool_name
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Tool Name
+      - name: quantity
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Quantity
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/estimate:
+    get:
+      tags:
+      - Billing
+      summary: Estimate Cost
+      operationId: estimate_cost_v1_billing_estimate_get
+      parameters:
+      - name: tool_name
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Tool Name
+      - name: quantity
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Quantity
+      - name: agent_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/exchange-rates:
+    get:
+      tags:
+      - Billing
+      summary: Get Exchange Rate
+      operationId: get_exchange_rate_v1_billing_exchange_rates_get
+      parameters:
+      - name: from_currency
+        in: query
+        required: true
+        schema:
+          type: string
+          title: From Currency
+      - name: to_currency
+        in: query
+        required: true
+        schema:
+          type: string
+          title: To Currency
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/keys:
+    post:
+      tags:
+      - Billing
+      summary: Create Billing Api Key
+      operationId: create_billing_api_key_v1_billing_keys_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBillingApiKeyRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Billing
+      summary: List Billing Api Keys
+      description: 'List API keys owned by the authenticated caller.
+
+
+        v1.2.4 audit P0-1: this is the non-admin self-service path.
+
+        ``create_api_key`` is reused as the ``require_tool`` anchor
+
+        (it is NOT in ``ADMIN_ONLY_TOOLS``) so free/pro tiers reach
+
+        this handler without hitting the admin gate. The handler then
+
+        calls the ``_list_api_keys`` implementation directly, always
+
+        scoped to the authenticated caller''s ``agent_id`` via ownership.'
+      operationId: list_billing_api_keys_v1_billing_keys_get
+      parameters:
+      - name: agent_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/billing/wallets/{agent_id}/convert:
+    post:
+      tags:
+      - Billing
+      summary: Convert Currency
+      operationId: convert_currency_v1_billing_wallets__agent_id__convert_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConvertCurrencyRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ConvertCurrencyRequest:
+      properties:
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        from_currency:
+          type: string
+          title: From Currency
+        to_currency:
+          type: string
+          title: To Currency
+      additionalProperties: false
+      type: object
+      required:
+      - amount
+      - from_currency
+      - to_currency
+      title: ConvertCurrencyRequest
+      example:
+        amount: '100.00'
+        from_currency: CREDITS
+        to_currency: USD
+    DepositRequest:
+      properties:
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        currency:
+          type: string
+          title: Currency
+          default: CREDITS
+        description:
+          type: string
+          maxLength: 2000
+          title: Description
+          default: ''
+      additionalProperties: false
+      type: object
+      required:
+      - amount
+      title: DepositRequest
+      example:
+        amount: '50.00'
+        currency: CREDITS
+        description: Top-up via Stripe
+    BudgetCapRequest:
+      properties:
+        daily:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Daily
+        monthly:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Monthly
+        alert_threshold:
+          type: number
+          title: Alert Threshold
+          default: 0.8
+      additionalProperties: false
+      type: object
+      title: BudgetCapRequest
+      example:
+        alert_threshold: 0.8
+        daily_cap: '100.00'
+        monthly_cap: '2000.00'
+    CreateWalletRequest:
+      properties:
+        agent_id:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Agent Id
+        initial_balance:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          title: Initial Balance
+          default: '0'
+        signup_bonus:
+          type: boolean
+          title: Signup Bonus
+          default: true
+      additionalProperties: false
+      type: object
+      required:
+      - agent_id
+      title: CreateWalletRequest
+      example:
+        agent_id: agent-alice
+        initial_balance: '100.00'
+        signup_bonus: true
+    CreateBillingApiKeyRequest:
+      properties:
+        tier:
+          type: string
+          title: Tier
+          default: free
+      additionalProperties: false
+      type: object
+      title: CreateBillingApiKeyRequest
+      description: 'Self-service API key creation — v1.2.4 audit P0-1 successor
+
+        of the former ``POST /v1/infra/keys``.'
+      example:
+        tier: free
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    WithdrawRequest:
+      properties:
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        currency:
+          type: string
+          title: Currency
+          default: CREDITS
+        description:
+          type: string
+          maxLength: 2000
+          title: Description
+          default: ''
+      additionalProperties: false
+      type: object
+      required:
+      - amount
+      title: WithdrawRequest
+      example:
+        amount: '25.00'
+        currency: CREDITS
+        description: Payout to external wallet
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: API key passed as Bearer token in the Authorization header.
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed directly in the X-API-Key header (alternative to Bearer).
+    X402Payment:
+      type: apiKey
+      in: header
+      name: X-PAYMENT
+      description: x402 payment proof for stateless authentication.
+x-refined-from:
+- greenhelix-net-openapi.json
+- greenhelix-net-a2a-commerce-gateway-openapi.yml

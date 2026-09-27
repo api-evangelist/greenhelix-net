@@ -1,0 +1,723 @@
+openapi: 3.2.0
+info:
+  title: Greenhelix Net Identity API
+  version: 1.4.10
+  description: 'Operations tagged identity across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.greenhelix.net
+  description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
+- url: https://sandbox.greenhelix.net
+  description: 'Sandbox — identical surface, databases reset on every deploy (docs.html; probed 2026-09-19: /v1/health 200, same 1.4.10 build)'
+security:
+- BearerAuth: []
+- ApiKeyAuth: []
+- X402Payment: []
+tags:
+- name: Identity
+paths:
+  /v1/identity/agents:
+    post:
+      tags:
+      - Identity
+      summary: Register Agent
+      operationId: register_agent_v1_identity_agents_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterAgentRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Identity
+      summary: Search Agents By Metrics
+      operationId: search_agents_by_metrics_v1_identity_agents_get
+      parameters:
+      - name: metric_name
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Metric Name
+      - name: min_value
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Min Value
+      - name: max_value
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Max Value
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/identity/agents/{agent_id}:
+    get:
+      tags:
+      - Identity
+      summary: Get Agent Identity
+      operationId: get_agent_identity_v1_identity_agents__agent_id__get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/identity/agents/{agent_id}/verify:
+    post:
+      tags:
+      - Identity
+      summary: Verify Agent
+      operationId: verify_agent_v1_identity_agents__agent_id__verify_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyAgentRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/identity/agents/{agent_id}/reputation:
+    get:
+      tags:
+      - Identity
+      summary: Get Agent Reputation
+      operationId: get_agent_reputation_v1_identity_agents__agent_id__reputation_get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/identity/agents/{agent_id}/claims:
+    get:
+      tags:
+      - Identity
+      summary: Get Verified Claims
+      operationId: get_verified_claims_v1_identity_agents__agent_id__claims_get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/identity/agents/{agent_id}/metrics:
+    post:
+      tags:
+      - Identity
+      summary: Submit Metrics
+      operationId: submit_metrics_v1_identity_agents__agent_id__metrics_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitMetricsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/identity/agents/{agent_id}/claim-chains:
+    post:
+      tags:
+      - Identity
+      summary: Build Claim Chain
+      operationId: build_claim_chain_v1_identity_agents__agent_id__claim_chains_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Identity
+      summary: Get Claim Chains
+      operationId: get_claim_chains_v1_identity_agents__agent_id__claim_chains_get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 10
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/identity/orgs:
+    post:
+      tags:
+      - Identity
+      summary: Create Org
+      operationId: create_org_v1_identity_orgs_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrgRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/identity/orgs/{org_id}:
+    get:
+      tags:
+      - Identity
+      summary: Get Org
+      operationId: get_org_v1_identity_orgs__org_id__get
+      parameters:
+      - name: org_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Org Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/identity/orgs/{org_id}/members:
+    post:
+      tags:
+      - Identity
+      summary: Add Agent To Org
+      operationId: add_agent_to_org_v1_identity_orgs__org_id__members_post
+      parameters:
+      - name: org_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Org Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddMemberRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/identity/orgs/{org_id}/members/{agent_id}:
+    delete:
+      tags:
+      - Identity
+      summary: Remove Agent From Org
+      operationId: remove_agent_from_org_v1_identity_orgs__org_id__members__agent_id__delete
+      parameters:
+      - name: org_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Org Id
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/identity/metrics/ingest:
+    post:
+      tags:
+      - Identity
+      summary: Ingest Metrics
+      operationId: ingest_metrics_v1_identity_metrics_ingest_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IngestMetricsRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/identity/metrics:
+    get:
+      tags:
+      - Identity
+      summary: Query Metrics
+      operationId: query_metrics_v1_identity_metrics_get
+      parameters:
+      - name: agent_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: metric_name
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Metric Name
+      - name: since
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Since
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 100
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/identity/metrics/deltas:
+    get:
+      tags:
+      - Identity
+      summary: Get Metric Deltas
+      operationId: get_metric_deltas_v1_identity_metrics_deltas_get
+      parameters:
+      - name: agent_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: metric_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Metric Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/identity/metrics/averages:
+    get:
+      tags:
+      - Identity
+      summary: Get Metric Averages
+      operationId: get_metric_averages_v1_identity_metrics_averages_get
+      parameters:
+      - name: agent_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: period
+        in: query
+        required: false
+        schema:
+          type: string
+          default: 30d
+          title: Period
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    SubmitMetricsRequest:
+      properties:
+        metrics:
+          additionalProperties: true
+          type: object
+          title: Metrics
+        data_source:
+          type: string
+          title: Data Source
+          default: self_reported
+      additionalProperties: false
+      type: object
+      required:
+      - metrics
+      title: SubmitMetricsRequest
+      example:
+        data_source: self_reported
+        metrics:
+          avg_response_ms: 245
+          error_rate: 0.01
+          uptime: 0.999
+    RegisterAgentRequest:
+      properties:
+        agent_id:
+          type: string
+          maxLength: 128
+          title: Agent Id
+        public_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Public Key
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        capabilities:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Capabilities
+      additionalProperties: false
+      type: object
+      required:
+      - agent_id
+      title: RegisterAgentRequest
+      example:
+        agent_id: agent-alice
+        name: Alice Agent
+        public_key: ed25519:abc123...
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    IngestMetricsRequest:
+      properties:
+        agent_id:
+          type: string
+          maxLength: 128
+          title: Agent Id
+        metrics:
+          additionalProperties: true
+          type: object
+          title: Metrics
+        data_source:
+          type: string
+          title: Data Source
+          default: self_reported
+        signature:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Signature
+        nonce:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Nonce
+      additionalProperties: false
+      type: object
+      required:
+      - agent_id
+      - metrics
+      title: IngestMetricsRequest
+      example:
+        agent_id: agent-alice
+        data_source: self_reported
+        metrics:
+          requests_served: 15420
+          uptime: 0.999
+    AddMemberRequest:
+      properties:
+        agent_id:
+          type: string
+          maxLength: 128
+          title: Agent Id
+        role:
+          type: string
+          title: Role
+          default: member
+      additionalProperties: false
+      type: object
+      required:
+      - agent_id
+      title: AddMemberRequest
+      example:
+        agent_id: agent-bob
+        role: member
+    CreateOrgRequest:
+      properties:
+        org_name:
+          type: string
+          title: Org Name
+        agent_id:
+          type: string
+          title: Agent Id
+          default: ''
+      additionalProperties: false
+      type: object
+      required:
+      - org_name
+      title: CreateOrgRequest
+      example:
+        agent_id: agent-alice
+        org_name: Acme AI Agents
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    VerifyAgentRequest:
+      properties:
+        message:
+          type: string
+          title: Message
+        signature:
+          type: string
+          title: Signature
+      additionalProperties: false
+      type: object
+      required:
+      - message
+      - signature
+      title: VerifyAgentRequest
+      example:
+        message: challenge-nonce-12345
+        signature: sig_hex_string...
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: API key passed as Bearer token in the Authorization header.
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed directly in the X-API-Key header (alternative to Bearer).
+    X402Payment:
+      type: apiKey
+      in: header
+      name: X-PAYMENT
+      description: x402 payment proof for stateless authentication.
+x-refined-from:
+- greenhelix-net-openapi.json
+- greenhelix-net-a2a-commerce-gateway-openapi.yml

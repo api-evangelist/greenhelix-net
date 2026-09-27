@@ -1,0 +1,271 @@
+openapi: 3.2.0
+info:
+  title: Greenhelix Net Disputes API
+  version: 1.4.10
+  description: 'Operations tagged disputes across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.greenhelix.net
+  description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
+- url: https://sandbox.greenhelix.net
+  description: 'Sandbox — identical surface, databases reset on every deploy (docs.html; probed 2026-09-19: /v1/health 200, same 1.4.10 build)'
+security:
+- BearerAuth: []
+- ApiKeyAuth: []
+- X402Payment: []
+tags:
+- name: Disputes
+paths:
+  /v1/disputes:
+    post:
+      tags:
+      - Disputes
+      summary: Open Dispute
+      operationId: open_dispute_v1_disputes_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpenDisputeRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Disputes
+      summary: List Disputes
+      operationId: list_disputes_v1_disputes_get
+      parameters:
+      - name: agent_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/disputes/{dispute_id}:
+    get:
+      tags:
+      - Disputes
+      summary: Get Dispute
+      operationId: get_dispute_v1_disputes__dispute_id__get
+      parameters:
+      - name: dispute_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Dispute Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/disputes/{dispute_id}/respond:
+    post:
+      tags:
+      - Disputes
+      summary: Respond To Dispute
+      operationId: respond_to_dispute_v1_disputes__dispute_id__respond_post
+      parameters:
+      - name: dispute_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Dispute Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RespondToDisputeRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/disputes/{dispute_id}/resolve:
+    post:
+      tags:
+      - Disputes
+      summary: Resolve Dispute
+      operationId: resolve_dispute_v1_disputes__dispute_id__resolve_post
+      parameters:
+      - name: dispute_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Dispute Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResolveDisputeRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    OpenDisputeRequest:
+      properties:
+        escrow_id:
+          type: string
+          title: Escrow Id
+        opener:
+          type: string
+          title: Opener
+        reason:
+          type: string
+          title: Reason
+          default: ''
+      additionalProperties: false
+      type: object
+      required:
+      - escrow_id
+      - opener
+      title: OpenDisputeRequest
+    RespondToDisputeRequest:
+      properties:
+        respondent:
+          type: string
+          title: Respondent
+        response:
+          type: string
+          title: Response
+      additionalProperties: false
+      type: object
+      required:
+      - respondent
+      - response
+      title: RespondToDisputeRequest
+    ResolveDisputeRequest:
+      properties:
+        resolution:
+          type: string
+          title: Resolution
+        resolved_by:
+          type: string
+          title: Resolved By
+        notes:
+          type: string
+          title: Notes
+          default: ''
+      additionalProperties: false
+      type: object
+      required:
+      - resolution
+      - resolved_by
+      title: ResolveDisputeRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: API key passed as Bearer token in the Authorization header.
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed directly in the X-API-Key header (alternative to Bearer).
+    X402Payment:
+      type: apiKey
+      in: header
+      name: X-PAYMENT
+      description: x402 payment proof for stateless authentication.
+x-refined-from:
+- greenhelix-net-openapi.json
+- greenhelix-net-a2a-commerce-gateway-openapi.yml

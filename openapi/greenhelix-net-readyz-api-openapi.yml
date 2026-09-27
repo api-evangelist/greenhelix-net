@@ -1,0 +1,49 @@
+openapi: 3.2.0
+info:
+  title: Greenhelix Net Readyz API
+  version: 1.4.10
+  description: 'Operations tagged Readyz across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.greenhelix.net
+  description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
+- url: https://sandbox.greenhelix.net
+  description: 'Sandbox — identical surface, databases reset on every deploy (docs.html; probed 2026-09-19: /v1/health 200, same 1.4.10 build)'
+security:
+- BearerAuth: []
+- ApiKeyAuth: []
+- X402Payment: []
+tags:
+- name: Readyz
+paths:
+  /readyz:
+    get:
+      summary: Readyz
+      description: Kubernetes readiness probe — checks billing DB.
+      operationId: readyz_readyz_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Readyz
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: API key passed as Bearer token in the Authorization header.
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed directly in the X-API-Key header (alternative to Bearer).
+    X402Payment:
+      type: apiKey
+      in: header
+      name: X-PAYMENT
+      description: x402 payment proof for stateless authentication.
+x-refined-from:
+- greenhelix-net-openapi.json
+- greenhelix-net-a2a-commerce-gateway-openapi.yml

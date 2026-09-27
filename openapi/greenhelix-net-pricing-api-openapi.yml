@@ -1,0 +1,121 @@
+openapi: 3.2.0
+info:
+  title: Greenhelix Net Pricing API
+  version: 1.4.10
+  description: 'Operations tagged Pricing across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.greenhelix.net
+  description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
+- url: https://sandbox.greenhelix.net
+  description: 'Sandbox — identical surface, databases reset on every deploy (docs.html; probed 2026-09-19: /v1/health 200, same 1.4.10 build)'
+security:
+- BearerAuth: []
+- ApiKeyAuth: []
+- X402Payment: []
+tags:
+- name: Pricing
+paths:
+  /v1/pricing:
+    get:
+      summary: Pricing List
+      description: 'Return the tool catalog with optional pagination.
+
+
+        Query params:
+
+        limit (int, optional): Max number of tools to return. Negative values ignored.
+
+        offset (int, optional): Number of tools to skip. Default 0.
+
+        cursor (str, optional): Opaque cursor from previous page''s next_cursor.'
+      operationId: pricing_list_v1_pricing_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Pricing
+  /v1/pricing/summary:
+    get:
+      summary: Pricing Summary
+      description: Return pricing grouped by service for a quick overview.
+      operationId: pricing_summary_v1_pricing_summary_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Pricing
+  /v1/pricing/tiers:
+    get:
+      summary: Pricing Tiers
+      description: Return a human-readable comparison of all API tiers.
+      operationId: pricing_tiers_v1_pricing_tiers_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Pricing
+  /v1/pricing/{tool}:
+    get:
+      summary: Pricing Detail
+      description: Return pricing info for a single tool.
+      operationId: pricing_detail_v1_pricing__tool__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Pricing
+  /pricing:
+    get:
+      summary: Redirect Pricing
+      operationId: _redirect_pricing_pricing_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Pricing
+  /pricing/{tool}:
+    get:
+      summary: Redirect Pricing Tool
+      operationId: _redirect_pricing_tool_pricing__tool__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Pricing
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: API key passed as Bearer token in the Authorization header.
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed directly in the X-API-Key header (alternative to Bearer).
+    X402Payment:
+      type: apiKey
+      in: header
+      name: X-PAYMENT
+      description: x402 payment proof for stateless authentication.
+x-refined-from:
+- greenhelix-net-openapi.json
+- greenhelix-net-a2a-commerce-gateway-openapi.yml

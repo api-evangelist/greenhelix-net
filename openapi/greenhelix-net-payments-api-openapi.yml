@@ -1,0 +1,1011 @@
+openapi: 3.2.0
+info:
+  title: Greenhelix Net Payments API
+  version: 1.4.10
+  description: 'Operations tagged payments across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.greenhelix.net
+  description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
+- url: https://sandbox.greenhelix.net
+  description: 'Sandbox — identical surface, databases reset on every deploy (docs.html; probed 2026-09-19: /v1/health 200, same 1.4.10 build)'
+security:
+- BearerAuth: []
+- ApiKeyAuth: []
+- X402Payment: []
+tags:
+- name: Payments
+paths:
+  /v1/payments/intents/split:
+    post:
+      tags:
+      - Payments
+      summary: Create Split Intent
+      operationId: create_split_intent_v1_payments_intents_split_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSplitIntentRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/intents:
+    post:
+      tags:
+      - Payments
+      summary: Create Intent
+      operationId: create_intent_v1_payments_intents_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateIntentRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Payments
+      summary: List Intents
+      operationId: list_intents_v1_payments_intents_get
+      parameters:
+      - name: agent_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/intents/{intent_id}:
+    get:
+      tags:
+      - Payments
+      summary: Get Intent
+      operationId: get_intent_v1_payments_intents__intent_id__get
+      parameters:
+      - name: intent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Intent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/intents/{intent_id}/capture:
+    post:
+      tags:
+      - Payments
+      summary: Capture Intent
+      operationId: capture_intent_v1_payments_intents__intent_id__capture_post
+      parameters:
+      - name: intent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Intent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/intents/{intent_id}/partial-capture:
+    post:
+      tags:
+      - Payments
+      summary: Partial Capture
+      operationId: partial_capture_v1_payments_intents__intent_id__partial_capture_post
+      parameters:
+      - name: intent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Intent Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartialCaptureRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/intents/{intent_id}/refund:
+    post:
+      tags:
+      - Payments
+      summary: Refund Intent
+      operationId: refund_intent_v1_payments_intents__intent_id__refund_post
+      parameters:
+      - name: intent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Intent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/escrows/performance:
+    post:
+      tags:
+      - Payments
+      summary: Create Performance Escrow
+      operationId: create_performance_escrow_v1_payments_escrows_performance_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePerformanceEscrowRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/escrows:
+    post:
+      tags:
+      - Payments
+      summary: Create Escrow
+      operationId: create_escrow_v1_payments_escrows_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEscrowRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Payments
+      summary: List Escrows
+      operationId: list_escrows_v1_payments_escrows_get
+      parameters:
+      - name: agent_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/escrows/{escrow_id}:
+    get:
+      tags:
+      - Payments
+      summary: Get Escrow
+      operationId: get_escrow_v1_payments_escrows__escrow_id__get
+      parameters:
+      - name: escrow_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Escrow Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/escrows/{escrow_id}/release:
+    post:
+      tags:
+      - Payments
+      summary: Release Escrow
+      operationId: release_escrow_v1_payments_escrows__escrow_id__release_post
+      parameters:
+      - name: escrow_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Escrow Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/escrows/{escrow_id}/cancel:
+    post:
+      tags:
+      - Payments
+      summary: Cancel Escrow
+      operationId: cancel_escrow_v1_payments_escrows__escrow_id__cancel_post
+      parameters:
+      - name: escrow_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Escrow Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/escrows/{escrow_id}/check-performance:
+    post:
+      tags:
+      - Payments
+      summary: Check Performance Escrow
+      operationId: check_performance_escrow_v1_payments_escrows__escrow_id__check_performance_post
+      parameters:
+      - name: escrow_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Escrow Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/settlements/{settlement_id}/refund:
+    post:
+      tags:
+      - Payments
+      summary: Refund Settlement
+      operationId: refund_settlement_v1_payments_settlements__settlement_id__refund_post
+      parameters:
+      - name: settlement_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Settlement Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - $ref: '#/components/schemas/RefundSettlementRequest'
+              - type: 'null'
+              title: Body
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/history:
+    get:
+      tags:
+      - Payments
+      summary: Get Payment History
+      operationId: get_payment_history_v1_payments_history_get
+      parameters:
+      - name: agent_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 100
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/subscriptions/process-due:
+    post:
+      tags:
+      - Payments
+      summary: Process Due Subscriptions
+      operationId: process_due_subscriptions_v1_payments_subscriptions_process_due_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /v1/payments/subscriptions:
+    post:
+      tags:
+      - Payments
+      summary: Create Subscription
+      operationId: create_subscription_v1_payments_subscriptions_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Payments
+      summary: List Subscriptions
+      operationId: list_subscriptions_v1_payments_subscriptions_get
+      parameters:
+      - name: agent_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Agent Id
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 100
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/subscriptions/{subscription_id}:
+    get:
+      tags:
+      - Payments
+      summary: Get Subscription
+      operationId: get_subscription_v1_payments_subscriptions__subscription_id__get
+      parameters:
+      - name: subscription_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Subscription Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/subscriptions/{subscription_id}/cancel:
+    post:
+      tags:
+      - Payments
+      summary: Cancel Subscription
+      operationId: cancel_subscription_v1_payments_subscriptions__subscription_id__cancel_post
+      parameters:
+      - name: subscription_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Subscription Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/payments/subscriptions/{subscription_id}/reactivate:
+    post:
+      tags:
+      - Payments
+      summary: Reactivate Subscription
+      operationId: reactivate_subscription_v1_payments_subscriptions__subscription_id__reactivate_post
+      parameters:
+      - name: subscription_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Subscription Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    CreateEscrowRequest:
+      properties:
+        payer:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payer
+        payee:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payee
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        description:
+          type: string
+          maxLength: 2000
+          title: Description
+          default: ''
+        currency:
+          type: string
+          title: Currency
+          default: CREDITS
+        timeout_hours:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Timeout Hours
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+      additionalProperties: false
+      type: object
+      required:
+      - payer
+      - payee
+      - amount
+      title: CreateEscrowRequest
+      example:
+        amount: '50.00'
+        description: Milestone delivery
+        payee: agent-bob
+        payer: agent-alice
+        timeout_hours: 72
+    CreateIntentRequest:
+      properties:
+        payer:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payer
+        payee:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payee
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        description:
+          type: string
+          maxLength: 2000
+          title: Description
+          default: ''
+        currency:
+          type: string
+          title: Currency
+          default: CREDITS
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+        idempotency_key:
+          anyOf:
+          - type: string
+            maxLength: 256
+          - type: 'null'
+          title: Idempotency Key
+      additionalProperties: false
+      type: object
+      required:
+      - payer
+      - payee
+      - amount
+      title: CreateIntentRequest
+      example:
+        amount: '10.00'
+        currency: CREDITS
+        description: Data analysis service
+        payee: agent-bob
+        payer: agent-alice
+    CreateSplitIntentRequest:
+      properties:
+        payer:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payer
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        splits:
+          items:
+            $ref: '#/components/schemas/SplitEntry'
+          type: array
+          title: Splits
+        description:
+          type: string
+          maxLength: 2000
+          title: Description
+          default: ''
+        currency:
+          type: string
+          title: Currency
+          default: CREDITS
+      additionalProperties: false
+      type: object
+      required:
+      - payer
+      - amount
+      - splits
+      title: CreateSplitIntentRequest
+      example:
+        amount: '100.00'
+        description: Revenue split
+        payer: agent-alice
+        splits:
+        - payee: agent-bob
+          percentage: 60
+        - payee: agent-carol
+          percentage: 40
+    CreatePerformanceEscrowRequest:
+      properties:
+        payer:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payer
+        payee:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payee
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        metric_name:
+          type: string
+          title: Metric Name
+        threshold:
+          type: string
+          title: Threshold
+        description:
+          type: string
+          maxLength: 2000
+          title: Description
+          default: ''
+        conditions:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Conditions
+      additionalProperties: false
+      type: object
+      required:
+      - payer
+      - payee
+      - amount
+      - metric_name
+      - threshold
+      title: CreatePerformanceEscrowRequest
+      example:
+        amount: '25.00'
+        conditions:
+          min_samples: 100
+        description: ML model delivery
+        metric_name: accuracy
+        payee: agent-bob
+        payer: agent-alice
+        threshold: '>=0.95'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    CreateSubscriptionRequest:
+      properties:
+        payer:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payer
+        payee:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payee
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        interval:
+          type: string
+          title: Interval
+        description:
+          type: string
+          maxLength: 2000
+          title: Description
+          default: ''
+        currency:
+          type: string
+          title: Currency
+          default: CREDITS
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+      additionalProperties: false
+      type: object
+      required:
+      - payer
+      - payee
+      - amount
+      - interval
+      title: CreateSubscriptionRequest
+      example:
+        amount: '9.99'
+        description: Premium data feed
+        interval: monthly
+        payee: agent-bob
+        payer: agent-alice
+    RefundSettlementRequest:
+      properties:
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          - type: 'null'
+          title: Amount
+        reason:
+          type: string
+          maxLength: 2000
+          title: Reason
+          default: ''
+      additionalProperties: false
+      type: object
+      title: RefundSettlementRequest
+      example:
+        amount: '10.00'
+        reason: Service not delivered
+    PartialCaptureRequest:
+      properties:
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+      additionalProperties: false
+      type: object
+      required:
+      - amount
+      title: PartialCaptureRequest
+      example:
+        amount: '15.00'
+    SplitEntry:
+      properties:
+        payee:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payee
+        percentage:
+          type: number
+          title: Percentage
+      additionalProperties: false
+      type: object
+      required:
+      - payee
+      - percentage
+      title: SplitEntry
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: API key passed as Bearer token in the Authorization header.
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed directly in the X-API-Key header (alternative to Bearer).
+    X402Payment:
+      type: apiKey
+      in: header
+      name: X-PAYMENT
+      description: x402 payment proof for stateless authentication.
+x-refined-from:
+- greenhelix-net-openapi.json
+- greenhelix-net-a2a-commerce-gateway-openapi.yml

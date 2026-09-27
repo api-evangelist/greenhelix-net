@@ -1,0 +1,64 @@
+openapi: 3.2.0
+info:
+  title: Greenhelix Net Events API
+  version: 1.4.10
+  description: 'Operations tagged Events across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.greenhelix.net
+  description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
+- url: https://sandbox.greenhelix.net
+  description: 'Sandbox — identical surface, databases reset on every deploy (docs.html; probed 2026-09-19: /v1/health 200, same 1.4.10 build)'
+security:
+- BearerAuth: []
+- ApiKeyAuth: []
+- X402Payment: []
+tags:
+- name: Events
+paths:
+  /v1/events/stream:
+    get:
+      summary: Event Stream
+      description: 'Stream events via Server-Sent Events (SSE).
+
+
+        Requires API key via Authorization header.
+
+        Accepts query params:
+
+        - event_type (optional): filter by event type
+
+        - since_id (optional): only events after this ID
+
+        - agent_id (optional): filter events by source agent
+
+        Accepts headers:
+
+        - Last-Event-ID: resume from this event ID (overrides since_id)'
+      operationId: event_stream_v1_events_stream_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Events
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: API key passed as Bearer token in the Authorization header.
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed directly in the X-API-Key header (alternative to Bearer).
+    X402Payment:
+      type: apiKey
+      in: header
+      name: X-PAYMENT
+      description: x402 payment proof for stateless authentication.
+x-refined-from:
+- greenhelix-net-openapi.json
+- greenhelix-net-a2a-commerce-gateway-openapi.yml

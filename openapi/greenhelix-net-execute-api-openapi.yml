@@ -1,0 +1,938 @@
+openapi: 3.2.0
+info:
+  title: Greenhelix Net Execute API
+  version: 1.4.10
+  description: 'Operations tagged Execute across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.greenhelix.net
+  description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
+- url: https://sandbox.greenhelix.net
+  description: 'Sandbox — identical surface, databases reset on every deploy (docs.html; probed 2026-09-19: /v1/health 200, same 1.4.10 build)'
+security:
+- BearerAuth: []
+- ApiKeyAuth: []
+- X402Payment: []
+tags:
+- name: Execute
+paths:
+  /v1/execute:
+    post:
+      summary: Execute
+      description: 'Execute a tool. Wraps the real implementation so EVERY response
+
+        — success, 410 moved, 4xx, 5xx — carries RFC 8594 deprecation
+
+        headers (Deprecation + Sunset + Link rel=sunset).'
+      operationId: execute_v1_execute_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      requestBody:
+        content:
+          application/json:
+            examples:
+              get_balance:
+                summary: Get the current wallet balance for an agent in a specific currency.
+                value:
+                  tool: get_balance
+                  params:
+                    agent_id: example-agent_id
+              get_usage_summary:
+                summary: Get usage summary (total cost, calls, tokens) for an agent.
+                value:
+                  tool: get_usage_summary
+                  params:
+                    agent_id: example-agent_id
+              deposit:
+                summary: Deposit funds into an agent's wallet in a specific currency.
+                value:
+                  tool: deposit
+                  params:
+                    agent_id: example-agent_id
+                    amount: 1.0
+              get_transactions:
+                summary: Get the transaction ledger for an agent (deposits, withdrawals, charges).
+                value:
+                  tool: get_transactions
+                  params:
+                    agent_id: example-agent_id
+              create_intent:
+                summary: Create a payment intent between two agents.
+                value:
+                  tool: create_intent
+                  params:
+                    payer: example-payer
+                    payee: example-payee
+                    amount: 1.0
+              get_intent:
+                summary: Get details of a payment intent by its ID.
+                value:
+                  tool: get_intent
+                  params:
+                    intent_id: example-intent_id
+              get_escrow:
+                summary: Get details of an escrow by its ID.
+                value:
+                  tool: get_escrow
+                  params:
+                    escrow_id: example-escrow_id
+              capture_intent:
+                summary: Capture (settle) a pending payment intent.
+                value:
+                  tool: capture_intent
+                  params:
+                    intent_id: example-intent_id
+              partial_capture:
+                summary: Partially capture a pending payment intent for a specified amount.
+                value:
+                  tool: partial_capture
+                  params:
+                    intent_id: example-intent_id
+                    amount: 1.0
+              create_escrow:
+                summary: Create an escrow between two agents. Funds are held from payer immediately.
+                value:
+                  tool: create_escrow
+                  params:
+                    payer: example-payer
+                    payee: example-payee
+                    amount: 1.0
+              release_escrow:
+                summary: Release escrowed funds to the payee.
+                value:
+                  tool: release_escrow
+                  params:
+                    escrow_id: example-escrow_id
+              cancel_escrow:
+                summary: Cancel a held escrow and refund the payer.
+                value:
+                  tool: cancel_escrow
+                  params:
+                    escrow_id: example-escrow_id
+              list_intents:
+                summary: List payment intents for an agent, optionally filtered by status.
+                value:
+                  tool: list_intents
+                  params:
+                    agent_id: example-agent_id
+              list_escrows:
+                summary: List escrows for an agent, optionally filtered by status.
+                value:
+                  tool: list_escrows
+                  params:
+                    agent_id: example-agent_id
+              refund_intent:
+                summary: 'Refund a payment intent: voids if pending, reverse-transfers if settled.'
+                value:
+                  tool: refund_intent
+                  params:
+                    intent_id: example-intent_id
+              refund_settlement:
+                summary: Refund a settled payment (full or partial). If amount is omitted, refunds the full remaining balance.
+                value:
+                  tool: refund_settlement
+                  params:
+                    settlement_id: example-settlement_id
+              search_services:
+                summary: Search the marketplace for available services. Supports pagination via paginate=true.
+                value:
+                  tool: search_services
+                  params: {}
+              search_agents:
+                summary: Search for agents by capability keywords. Searches service names, descriptions, tools, tags, and categories. Supports pagination via paginate=true.
+                value:
+                  tool: search_agents
+                  params:
+                    query: example-query
+              best_match:
+                summary: Find the best matching services for a query with ranking.
+                value:
+                  tool: best_match
+                  params:
+                    query: example-query
+              register_service:
+                summary: Register a new service in the marketplace.
+                value:
+                  tool: register_service
+                  params:
+                    provider_id: example-provider_id
+                    name: example-name
+                    description: example-description
+                    category: example-category
+              get_service:
+                summary: Get a marketplace service by its ID.
+                value:
+                  tool: get_service
+                  params:
+                    service_id: example-service_id
+              update_service:
+                summary: Update fields on an existing marketplace service.
+                value:
+                  tool: update_service
+                  params:
+                    service_id: example-service_id
+              deactivate_service:
+                summary: Deactivate a marketplace service listing.
+                value:
+                  tool: deactivate_service
+                  params:
+                    service_id: example-service_id
+              get_trust_score:
+                summary: Get the trust score for a server.
+                value:
+                  tool: get_trust_score
+                  params: {}
+              search_servers:
+                summary: Search for servers by name or minimum trust score.
+                value:
+                  tool: search_servers
+                  params: {}
+              get_payment_history:
+                summary: Get payment history for an agent.
+                value:
+                  tool: get_payment_history
+                  params:
+                    agent_id: example-agent_id
+              register_server:
+                summary: Register a new server for trust tracking.
+                value:
+                  tool: register_server
+                  params:
+                    name: example-name
+                    url: example-url
+              delete_server:
+                summary: Delete a server and all its associated trust data (probes, scans, scores).
+                value:
+                  tool: delete_server
+                  params: {}
+              update_server:
+                summary: Update a server's name and/or URL.
+                value:
+                  tool: update_server
+                  params: {}
+              get_global_audit_log:
+                summary: Get the global audit log across all agents (admin operation).
+                value:
+                  tool: get_global_audit_log
+                  params: {}
+              publish_event:
+                summary: Publish an event to the cross-product event bus.
+                value:
+                  tool: publish_event
+                  params:
+                    event_type: example-event_type
+                    source: example-source
+              get_events:
+                summary: Query events from the event bus with optional type filter and offset.
+                value:
+                  tool: get_events
+                  params: {}
+              register_webhook:
+                summary: Register a webhook endpoint to receive event notifications.
+                value:
+                  tool: register_webhook
+                  params:
+                    agent_id: example-agent_id
+                    url: example-url
+                    event_types: []
+              list_webhooks:
+                summary: List all registered webhooks for an agent. Supports pagination via paginate=true.
+                value:
+                  tool: list_webhooks
+                  params:
+                    agent_id: example-agent_id
+              delete_webhook:
+                summary: Delete (deactivate) a webhook by its ID.
+                value:
+                  tool: delete_webhook
+                  params:
+                    webhook_id: example-webhook_id
+              get_webhook_deliveries:
+                summary: Get delivery history for a webhook endpoint.
+                value:
+                  tool: get_webhook_deliveries
+                  params:
+                    webhook_id: example-webhook_id
+              process_due_subscriptions:
+                summary: Trigger processing of all due subscriptions and expired escrows.
+                value:
+                  tool: process_due_subscriptions
+                  params: {}
+              register_agent:
+                summary: Register a cryptographic identity for an agent. Generates Ed25519 keypair.
+                value:
+                  tool: register_agent
+                  params:
+                    agent_id: example-agent_id
+              verify_agent:
+                summary: Verify that a message was signed by the claimed agent.
+                value:
+                  tool: verify_agent
+                  params:
+                    agent_id: example-agent_id
+                    message: example-message
+                    signature: example-signature
+              submit_metrics:
+                summary: Submit trading bot metrics (Sharpe, drawdown, latency, etc.) for platform attestation.
+                value:
+                  tool: submit_metrics
+                  params:
+                    agent_id: example-agent_id
+                    metrics: {}
+              get_agent_identity:
+                summary: Get the cryptographic identity and public key for an agent.
+                value:
+                  tool: get_agent_identity
+                  params:
+                    agent_id: example-agent_id
+              get_verified_claims:
+                summary: Get all verified metric claims for an agent (e.g., Sharpe >= 2.0).
+                value:
+                  tool: get_verified_claims
+                  params:
+                    agent_id: example-agent_id
+              get_agent_reputation:
+                summary: Get the consumer-side reputation score for an agent.
+                value:
+                  tool: get_agent_reputation
+                  params:
+                    agent_id: example-agent_id
+              create_subscription:
+                summary: Create a recurring payment subscription between two agents.
+                value:
+                  tool: create_subscription
+                  params:
+                    payer: example-payer
+                    payee: example-payee
+                    amount: 1.0
+                    interval: example-interval
+              cancel_subscription:
+                summary: Cancel an active or suspended subscription.
+                value:
+                  tool: cancel_subscription
+                  params:
+                    subscription_id: example-subscription_id
+              get_subscription:
+                summary: Get details of a subscription by ID.
+                value:
+                  tool: get_subscription
+                  params:
+                    subscription_id: example-subscription_id
+              list_subscriptions:
+                summary: List subscriptions for an agent (as payer or payee).
+                value:
+                  tool: list_subscriptions
+                  params: {}
+              reactivate_subscription:
+                summary: Reactivate a suspended subscription.
+                value:
+                  tool: reactivate_subscription
+                  params:
+                    subscription_id: example-subscription_id
+              create_wallet:
+                summary: Create a new wallet for an agent (self-service onboarding).
+                value:
+                  tool: create_wallet
+                  params:
+                    agent_id: example-agent_id
+              withdraw:
+                summary: Withdraw funds from an agent's wallet in a specific currency.
+                value:
+                  tool: withdraw
+                  params:
+                    agent_id: example-agent_id
+                    amount: 1.0
+              search_agents_by_metrics:
+                summary: Search for agents with verified metric claims (e.g., find bots with Sharpe >= 2.0).
+                value:
+                  tool: search_agents_by_metrics
+                  params:
+                    metric_name: example-metric_name
+              create_performance_escrow:
+                summary: Create an escrow that auto-releases when payee's verified metrics meet a threshold.
+                value:
+                  tool: create_performance_escrow
+                  params:
+                    payer: example-payer
+                    payee: example-payee
+                    amount: 1.0
+                    metric_name: example-metric_name
+                    threshold: 1.0
+              check_performance_escrow:
+                summary: Check if a performance-gated escrow's metric threshold is met and auto-release if so.
+                value:
+                  tool: check_performance_escrow
+                  params:
+                    escrow_id: example-escrow_id
+              open_dispute:
+                summary: Open a dispute against an escrow.
+                value:
+                  tool: open_dispute
+                  params:
+                    escrow_id: example-escrow_id
+                    opener: example-opener
+              respond_to_dispute:
+                summary: Respond to an open dispute.
+                value:
+                  tool: respond_to_dispute
+                  params:
+                    dispute_id: example-dispute_id
+                    respondent: example-respondent
+                    response: example-response
+              resolve_dispute:
+                summary: Resolve a dispute by refunding payer or releasing funds to payee.
+                value:
+                  tool: resolve_dispute
+                  params:
+                    dispute_id: example-dispute_id
+                    resolution: example-resolution
+                    resolved_by: example-resolved_by
+              get_dispute:
+                summary: Get details of a dispute by its ID.
+                value:
+                  tool: get_dispute
+                  params:
+                    dispute_id: example-dispute_id
+              list_disputes:
+                summary: List disputes where the agent is opener or respondent.
+                value:
+                  tool: list_disputes
+                  params:
+                    agent_id: example-agent_id
+              rotate_key:
+                summary: 'Rotate an API key: revoke the current key and create a new one with the same tier.'
+                value:
+                  tool: rotate_key
+                  params:
+                    current_key: example-current_key
+              build_claim_chain:
+                summary: Build a Merkle tree from an agent's attestation history for verifiable claim chains.
+                value:
+                  tool: build_claim_chain
+                  params:
+                    agent_id: example-agent_id
+              get_claim_chains:
+                summary: Get stored Merkle claim chains for an agent.
+                value:
+                  tool: get_claim_chains
+                  params:
+                    agent_id: example-agent_id
+              send_message:
+                summary: Send a typed message to another agent.
+                value:
+                  tool: send_message
+                  params:
+                    sender: example-sender
+                    recipient: example-recipient
+                    message_type: example-message_type
+              get_messages:
+                summary: Get messages for an agent (sent and received).
+                value:
+                  tool: get_messages
+                  params:
+                    agent_id: example-agent_id
+              negotiate_price:
+                summary: Start a price negotiation with another agent.
+                value:
+                  tool: negotiate_price
+                  params:
+                    initiator: example-initiator
+                    responder: example-responder
+                    amount: 1.0
+              check_sla_compliance:
+                summary: Check if a server meets its claimed SLA using trust probe data.
+                value:
+                  tool: check_sla_compliance
+                  params: {}
+              list_strategies:
+                summary: List signal provider strategies in the marketplace.
+                value:
+                  tool: list_strategies
+                  params: {}
+              get_service_analytics:
+                summary: Get usage analytics for an agent (total calls, cost, tokens).
+                value:
+                  tool: get_service_analytics
+                  params:
+                    agent_id: example-agent_id
+              get_revenue_report:
+                summary: Get revenue report for a provider agent (incoming payments).
+                value:
+                  tool: get_revenue_report
+                  params:
+                    agent_id: example-agent_id
+              create_split_intent:
+                summary: Create a split payment across multiple payees with percentage-based distribution.
+                value:
+                  tool: create_split_intent
+                  params:
+                    payer: example-payer
+                    amount: 1.0
+                    splits: []
+              backup_database:
+                summary: Create a hot backup of a SQLite database, optionally encrypted with Fernet.
+                value:
+                  tool: backup_database
+                  params:
+                    database: example-database
+              restore_database:
+                summary: Restore a SQLite database from a backup file, with optional decryption.
+                value:
+                  tool: restore_database
+                  params:
+                    database: example-database
+              check_db_integrity:
+                summary: Run SQLite integrity check and return page diagnostics for a database.
+                value:
+                  tool: check_db_integrity
+                  params:
+                    database: example-database
+              list_backups:
+                summary: List all available database backup files.
+                value:
+                  tool: list_backups
+                  params: {}
+              stripe_list_customers:
+                summary: List Stripe customers.
+                value:
+                  tool: stripe_list_customers
+                  params: {}
+              stripe_create_customer:
+                summary: Create a Stripe customer.
+                value:
+                  tool: stripe_create_customer
+                  params:
+                    email: example-email
+              stripe_list_products:
+                summary: List Stripe products.
+                value:
+                  tool: stripe_list_products
+                  params: {}
+              stripe_create_product:
+                summary: Create a Stripe product.
+                value:
+                  tool: stripe_create_product
+                  params:
+                    name: example-name
+              stripe_list_prices:
+                summary: List Stripe prices.
+                value:
+                  tool: stripe_list_prices
+                  params: {}
+              stripe_create_price:
+                summary: Create a Stripe price.
+                value:
+                  tool: stripe_create_price
+                  params:
+                    product: example-product
+                    unit_amount: 1
+              stripe_create_payment_link:
+                summary: Create a Stripe payment link.
+                value:
+                  tool: stripe_create_payment_link
+                  params:
+                    price: example-price
+              stripe_list_invoices:
+                summary: List Stripe invoices.
+                value:
+                  tool: stripe_list_invoices
+                  params: {}
+              stripe_create_invoice:
+                summary: Create a Stripe invoice.
+                value:
+                  tool: stripe_create_invoice
+                  params:
+                    customer: example-customer
+              stripe_list_subscriptions:
+                summary: List Stripe subscriptions.
+                value:
+                  tool: stripe_list_subscriptions
+                  params: {}
+              stripe_cancel_subscription:
+                summary: Cancel a Stripe subscription.
+                value:
+                  tool: stripe_cancel_subscription
+                  params:
+                    subscription_id: example-subscription_id
+              stripe_create_refund:
+                summary: Create a Stripe refund.
+                value:
+                  tool: stripe_create_refund
+                  params:
+                    payment_intent: example-payment_intent
+              stripe_retrieve_balance:
+                summary: Retrieve Stripe account balance.
+                value:
+                  tool: stripe_retrieve_balance
+                  params: {}
+              github_list_repos:
+                summary: List GitHub repositories.
+                value:
+                  tool: github_list_repos
+                  params: {}
+              github_get_repo:
+                summary: Get GitHub repository metadata.
+                value:
+                  tool: github_get_repo
+                  params:
+                    owner: example-owner
+                    repo: example-repo
+              github_list_issues:
+                summary: List issues in a repository.
+                value:
+                  tool: github_list_issues
+                  params:
+                    owner: example-owner
+                    repo: example-repo
+              github_create_issue:
+                summary: Create an issue in a repository.
+                value:
+                  tool: github_create_issue
+                  params:
+                    owner: example-owner
+                    repo: example-repo
+                    title: example-title
+              github_list_pull_requests:
+                summary: List pull requests.
+                value:
+                  tool: github_list_pull_requests
+                  params:
+                    owner: example-owner
+                    repo: example-repo
+              github_get_pull_request:
+                summary: Get pull request details.
+                value:
+                  tool: github_get_pull_request
+                  params:
+                    owner: example-owner
+                    repo: example-repo
+                    pull_number: 1
+              github_create_pull_request:
+                summary: Create a pull request.
+                value:
+                  tool: github_create_pull_request
+                  params:
+                    owner: example-owner
+                    repo: example-repo
+                    title: example-title
+                    head: example-head
+                    base: example-base
+              github_list_commits:
+                summary: List commits in a repository.
+                value:
+                  tool: github_list_commits
+                  params:
+                    owner: example-owner
+                    repo: example-repo
+              github_get_file_contents:
+                summary: Get file contents from a repository.
+                value:
+                  tool: github_get_file_contents
+                  params:
+                    owner: example-owner
+                    repo: example-repo
+                    path: example-path
+              github_search_code:
+                summary: Search code across repositories.
+                value:
+                  tool: github_search_code
+                  params:
+                    query: example-query
+              pg_query:
+                summary: Execute a read-only SQL query.
+                value:
+                  tool: pg_query
+                  params:
+                    sql: example-sql
+              pg_execute:
+                summary: Execute a SQL statement (if write-enabled).
+                value:
+                  tool: pg_execute
+                  params:
+                    sql: example-sql
+              pg_list_tables:
+                summary: List tables in the database.
+                value:
+                  tool: pg_list_tables
+                  params: {}
+              pg_describe_table:
+                summary: Describe a table's columns and types.
+                value:
+                  tool: pg_describe_table
+                  params:
+                    table: example-table
+              pg_explain_query:
+                summary: EXPLAIN a SQL query plan.
+                value:
+                  tool: pg_explain_query
+                  params:
+                    sql: example-sql
+              pg_list_schemas:
+                summary: List schemas in the database.
+                value:
+                  tool: pg_list_schemas
+                  params: {}
+              get_metrics_timeseries:
+                summary: Get per-agent usage metrics bucketed by hour or day.
+                value:
+                  tool: get_metrics_timeseries
+                  params:
+                    agent_id: example-agent_id
+                    interval: example-interval
+              get_agent_leaderboard:
+                summary: Rank agents by total spend, calls, trust score, revenue, or rating.
+                value:
+                  tool: get_agent_leaderboard
+                  params:
+                    metric: example-metric
+              register_event_schema:
+                summary: Register a JSON schema for an event type in the event bus.
+                value:
+                  tool: register_event_schema
+                  params:
+                    event_type: example-event_type
+                    schema: {}
+              get_event_schema:
+                summary: Retrieve the registered JSON schema for an event type.
+                value:
+                  tool: get_event_schema
+                  params:
+                    event_type: example-event_type
+              test_webhook:
+                summary: Send a test ping event to a registered webhook and return the delivery result.
+                value:
+                  tool: test_webhook
+                  params:
+                    webhook_id: example-webhook_id
+              create_api_key:
+                summary: Create a new API key for yourself (self-service). Only same-agent or admin can create.
+                value:
+                  tool: create_api_key
+                  params:
+                    agent_id: example-agent_id
+              get_volume_discount:
+                summary: Calculate discounted price based on historical usage volume.
+                value:
+                  tool: get_volume_discount
+                  params:
+                    agent_id: example-agent_id
+                    tool_name: example-tool_name
+                    quantity: 1
+              estimate_cost:
+                summary: Calculate projected cost of N calls to a specific tool without executing them.
+                value:
+                  tool: estimate_cost
+                  params:
+                    tool_name: example-tool_name
+                    quantity: 1
+              rate_service:
+                summary: Rate a marketplace service (1-5). One rating per agent per service (upsert).
+                value:
+                  tool: rate_service
+                  params:
+                    service_id: example-service_id
+                    agent_id: example-agent_id
+                    rating: 1
+              get_service_ratings:
+                summary: Get ratings and reviews for a marketplace service.
+                value:
+                  tool: get_service_ratings
+                  params:
+                    service_id: example-service_id
+              set_budget_cap:
+                summary: Set daily/monthly spending caps and alert thresholds for an agent.
+                value:
+                  tool: set_budget_cap
+                  params:
+                    agent_id: example-agent_id
+              get_budget_status:
+                summary: Get current spending vs budget caps and alert status for an agent.
+                value:
+                  tool: get_budget_status
+                  params:
+                    agent_id: example-agent_id
+              freeze_wallet:
+                summary: Freeze a wallet, blocking all deposits and withdrawals. Admin only.
+                value:
+                  tool: freeze_wallet
+                  params:
+                    agent_id: example-agent_id
+              unfreeze_wallet:
+                summary: Unfreeze a wallet, allowing deposits and withdrawals again. Admin only.
+                value:
+                  tool: unfreeze_wallet
+                  params:
+                    agent_id: example-agent_id
+              create_org:
+                summary: Create a new organization.
+                value:
+                  tool: create_org
+                  params:
+                    org_name: example-org_name
+              get_org:
+                summary: Get organization details and members.
+                value:
+                  tool: get_org
+                  params:
+                    org_id: example-org_id
+              add_agent_to_org:
+                summary: Add an agent to an organization.
+                value:
+                  tool: add_agent_to_org
+                  params:
+                    org_id: example-org_id
+                    agent_id: example-agent_id
+              remove_agent_from_org:
+                summary: Remove an agent from an organization. Cannot remove the last owner.
+                value:
+                  tool: remove_agent_from_org
+                  params:
+                    org_id: example-org_id
+                    agent_id: example-agent_id
+              list_api_keys:
+                summary: List all API keys for an agent. Returns truncated key hash prefix, tier, scopes, and created_at (never the full key or hash). Supports pagination via paginate=true.
+                value:
+                  tool: list_api_keys
+                  params:
+                    agent_id: example-agent_id
+              revoke_api_key:
+                summary: Soft-delete (revoke) an API key by its hash prefix. The key will no longer be usable for authentication.
+                value:
+                  tool: revoke_api_key
+                  params:
+                    agent_id: example-agent_id
+                    key_hash_prefix: example-key_hash_prefix
+              get_exchange_rate:
+                summary: Query the exchange rate between two supported currencies.
+                value:
+                  tool: get_exchange_rate
+                  params:
+                    from_currency: example-from_currency
+                    to_currency: example-to_currency
+              convert_currency:
+                summary: Convert funds between currency balances for an agent. Withdraws from source currency and deposits converted amount to target currency.
+                value:
+                  tool: convert_currency
+                  params:
+                    agent_id: example-agent_id
+                    amount: 1.0
+                    from_currency: example-from_currency
+                    to_currency: example-to_currency
+              ingest_metrics:
+                summary: Ingest time-series metric data points for an agent. Supports optional Ed25519 signature verification for authenticated submissions.
+                value:
+                  tool: ingest_metrics
+                  params:
+                    agent_id: example-agent_id
+                    metrics: {}
+              query_metrics:
+                summary: Query time-series metric data for a specific agent and metric name, with optional time range filtering.
+                value:
+                  tool: query_metrics
+                  params:
+                    agent_id: example-agent_id
+                    metric_name: example-metric_name
+              get_metric_deltas:
+                summary: Get performance deltas (current vs previous value) for an agent across all metrics or a specific metric.
+                value:
+                  tool: get_metric_deltas
+                  params:
+                    agent_id: example-agent_id
+              get_metric_averages:
+                summary: Get pre-computed rolling averages for an agent over a specified period (7d, 30d, or 90d).
+                value:
+                  tool: get_metric_averages
+                  params:
+                    agent_id: example-agent_id
+              submit_verification:
+                summary: Submit a formal verification job. Each property can be written as raw Z3 SMT-LIB2 (language='z3_smt2') or as a structured JSON policy (language='json_policy', compiled server-side to SMT-LIB2). Returns a job ID for tracking.
+                value:
+                  tool: submit_verification
+                  params:
+                    agent_id: example-agent_id
+                    properties: []
+              get_verification_status:
+                summary: Get the current status and result of a verification job.
+                value:
+                  tool: get_verification_status
+                  params:
+                    job_id: example-job_id
+              list_verification_jobs:
+                summary: List verification jobs for an agent with optional status filter.
+                value:
+                  tool: list_verification_jobs
+                  params:
+                    agent_id: example-agent_id
+              cancel_verification:
+                summary: Cancel a pending or running verification job.
+                value:
+                  tool: cancel_verification
+                  params:
+                    job_id: example-job_id
+              get_proof:
+                summary: Retrieve a formal verification proof artifact by ID.
+                value:
+                  tool: get_proof
+                  params:
+                    proof_id: example-proof_id
+              verify_proof:
+                summary: Verify a formal verification proof by its SHA3-256 hash. Returns validity status.
+                value:
+                  tool: verify_proof
+                  params:
+                    proof_hash: example-proof_hash
+              atlas_discover:
+                summary: 'Enriched agent discovery: marketplace search + trust breakdown + reputation + ratings → Atlas Score.'
+                value:
+                  tool: atlas_discover
+                  params:
+                    query: example-query
+              atlas_preflight:
+                summary: 'Pre-transaction verification: endpoint reachable? trust OK? wallet active? pricing unchanged?'
+                value:
+                  tool: atlas_preflight
+                  params:
+                    service_id: example-service_id
+              atlas_broker:
+                summary: 'One-call brokering: discover → preflight → create payment intent.'
+                value:
+                  tool: atlas_broker
+                  params:
+                    query: example-query
+                    payer: example-payer
+      tags:
+      - Execute
+  /execute:
+    post:
+      summary: Redirect Execute
+      operationId: _redirect_execute_execute_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Execute
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: API key passed as Bearer token in the Authorization header.
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed directly in the X-API-Key header (alternative to Bearer).
+    X402Payment:
+      type: apiKey
+      in: header
+      name: X-PAYMENT
+      description: x402 payment proof for stateless authentication.
+x-refined-from:
+- greenhelix-net-openapi.json
+- greenhelix-net-a2a-commerce-gateway-openapi.yml

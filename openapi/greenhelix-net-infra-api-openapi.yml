@@ -1,0 +1,668 @@
+openapi: 3.2.0
+info:
+  title: Greenhelix Net Infra API
+  version: 1.4.10
+  description: 'Operations tagged infra across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.greenhelix.net
+  description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
+- url: https://sandbox.greenhelix.net
+  description: 'Sandbox — identical surface, databases reset on every deploy (docs.html; probed 2026-09-19: /v1/health 200, same 1.4.10 build)'
+security:
+- BearerAuth: []
+- ApiKeyAuth: []
+- X402Payment: []
+tags:
+- name: Infra
+paths:
+  /v1/infra/keys:
+    get:
+      tags:
+      - Infra
+      summary: List Api Keys
+      description: 'List API keys — admin only (fleet view).
+
+
+        v1.2.4 audit P0-1: ``list_api_keys`` is now in
+
+        ``ADMIN_ONLY_TOOLS`` so non-admin callers are rejected by
+
+        ``require_tool`` with 403 ``admin_only``. Non-admin callers
+
+        should use ``GET /v1/billing/keys`` for their own fleet.
+
+
+        When called by an admin, returns keys for ALL agents (fleet
+
+        view) because ownership is bypassed for admin tier.'
+      operationId: list_api_keys_v1_infra_keys_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+    post:
+      tags:
+      - Infra
+      summary: Create Api Key Deprecated
+      description: 'Deprecated: self-service key creation moved to /v1/billing/keys.'
+      operationId: create_api_key_deprecated_v1_infra_keys_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /v1/infra/keys/revoke:
+    post:
+      tags:
+      - Infra
+      summary: Revoke Api Key
+      operationId: revoke_api_key_v1_infra_keys_revoke_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeApiKeyRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/infra/keys/rotate:
+    post:
+      tags:
+      - Infra
+      summary: Rotate Key
+      operationId: rotate_key_v1_infra_keys_rotate_post
+      parameters:
+      - name: X-Rotate-Confirmation
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rotate-Confirmation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RotateKeyRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/infra/audit-log:
+    get:
+      tags:
+      - Infra
+      summary: Get Global Audit Log
+      operationId: get_global_audit_log_v1_infra_audit_log_get
+      parameters:
+      - name: since
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Since
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 100
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/infra/databases/backups:
+    get:
+      tags:
+      - Infra
+      summary: List Backups
+      operationId: list_backups_v1_infra_databases_backups_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /v1/infra/databases/{database}/backup:
+    post:
+      tags:
+      - Infra
+      summary: Backup Database
+      operationId: backup_database_v1_infra_databases__database__backup_post
+      parameters:
+      - name: database
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - $ref: '#/components/schemas/BackupDatabaseRequest'
+              - type: 'null'
+              title: Body
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/infra/databases/{database}/restore:
+    post:
+      tags:
+      - Infra
+      summary: Restore Database
+      operationId: restore_database_v1_infra_databases__database__restore_post
+      parameters:
+      - name: database
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestoreDatabaseRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/infra/databases/{database}/integrity:
+    get:
+      tags:
+      - Infra
+      summary: Check Db Integrity
+      operationId: check_db_integrity_v1_infra_databases__database__integrity_get
+      parameters:
+      - name: database
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Database
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/infra/webhooks:
+    get:
+      tags:
+      - Infra
+      summary: List Webhooks
+      operationId: list_webhooks_v1_infra_webhooks_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+    post:
+      tags:
+      - Infra
+      summary: Register Webhook
+      operationId: register_webhook_v1_infra_webhooks_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterWebhookRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/infra/webhooks/{webhook_id}/test:
+    post:
+      tags:
+      - Infra
+      summary: Test Webhook
+      operationId: test_webhook_v1_infra_webhooks__webhook_id__test_post
+      parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Webhook Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/infra/webhooks/{webhook_id}:
+    delete:
+      tags:
+      - Infra
+      summary: Delete Webhook
+      operationId: delete_webhook_v1_infra_webhooks__webhook_id__delete
+      parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Webhook Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/infra/webhooks/{webhook_id}/deliveries:
+    get:
+      tags:
+      - Infra
+      summary: Get Webhook Deliveries
+      operationId: get_webhook_deliveries_v1_infra_webhooks__webhook_id__deliveries_get
+      parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Webhook Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/infra/events/schemas:
+    post:
+      tags:
+      - Infra
+      summary: Register Event Schema
+      operationId: register_event_schema_v1_infra_events_schemas_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterEventSchemaRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/infra/events:
+    post:
+      tags:
+      - Infra
+      summary: Publish Event
+      operationId: publish_event_v1_infra_events_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishEventRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Infra
+      summary: Get Events
+      operationId: get_events_v1_infra_events_get
+      parameters:
+      - name: event_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Event Type
+      - name: since_id
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Since Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 100
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/infra/events/schemas/{event_type}:
+    get:
+      tags:
+      - Infra
+      summary: Get Event Schema
+      operationId: get_event_schema_v1_infra_events_schemas__event_type__get
+      parameters:
+      - name: event_type
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Event Type
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    RegisterWebhookRequest:
+      properties:
+        url:
+          type: string
+          title: Url
+        events:
+          items:
+            type: string
+          type: array
+          title: Events
+        secret:
+          type: string
+          title: Secret
+        filter_agent_ids:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Filter Agent Ids
+      additionalProperties: false
+      type: object
+      required:
+      - url
+      - events
+      - secret
+      title: RegisterWebhookRequest
+    RevokeApiKeyRequest:
+      properties:
+        key_hash_prefix:
+          type: string
+          title: Key Hash Prefix
+      additionalProperties: false
+      type: object
+      required:
+      - key_hash_prefix
+      title: RevokeApiKeyRequest
+    BackupDatabaseRequest:
+      properties:
+        encrypt:
+          type: boolean
+          title: Encrypt
+          default: false
+      additionalProperties: false
+      type: object
+      title: BackupDatabaseRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    RegisterEventSchemaRequest:
+      properties:
+        event_type:
+          type: string
+          title: Event Type
+        schema:
+          additionalProperties: true
+          type: object
+          title: Schema
+      additionalProperties: false
+      type: object
+      required:
+      - event_type
+      - schema
+      title: RegisterEventSchemaRequest
+    RestoreDatabaseRequest:
+      properties:
+        backup_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Backup Path
+        filename:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filename
+        key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Key
+        key_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Key Id
+      additionalProperties: false
+      type: object
+      title: RestoreDatabaseRequest
+      description: 'Restore from a previous backup.
+
+
+        Either ``filename`` (preferred — matches what ``list_backups`` /
+
+        ``backup_database`` now return) or ``backup_path`` (legacy — full
+
+        path inside the backup dir) may be provided. ``filename`` is
+
+        resolved server-side against ``A2A_DATA_DIR/backups`` so callers
+
+        never need to know the absolute path.'
+    PublishEventRequest:
+      properties:
+        event_type:
+          type: string
+          title: Event Type
+        source:
+          type: string
+          title: Source
+        payload:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Payload
+      additionalProperties: false
+      type: object
+      required:
+      - event_type
+      - source
+      title: PublishEventRequest
+    RotateKeyRequest:
+      properties:
+        current_key:
+          type: string
+          title: Current Key
+      additionalProperties: false
+      type: object
+      required:
+      - current_key
+      title: RotateKeyRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: API key passed as Bearer token in the Authorization header.
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed directly in the X-API-Key header (alternative to Bearer).
+    X402Payment:
+      type: apiKey
+      in: header
+      name: X-PAYMENT
+      description: x402 payment proof for stateless authentication.
+x-refined-from:
+- greenhelix-net-openapi.json
+- greenhelix-net-a2a-commerce-gateway-openapi.yml

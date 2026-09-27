@@ -1,0 +1,344 @@
+openapi: 3.2.0
+info:
+  title: Greenhelix Net Gatekeeper API
+  version: 1.4.10
+  description: 'Operations tagged gatekeeper across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.greenhelix.net
+  description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
+- url: https://sandbox.greenhelix.net
+  description: 'Sandbox — identical surface, databases reset on every deploy (docs.html; probed 2026-09-19: /v1/health 200, same 1.4.10 build)'
+security:
+- BearerAuth: []
+- ApiKeyAuth: []
+- X402Payment: []
+tags:
+- name: gatekeeper
+paths:
+  /v1/gatekeeper/jobs:
+    post:
+      tags:
+      - gatekeeper
+      summary: Submit Verification
+      operationId: submit_verification_v1_gatekeeper_jobs_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitVerificationRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - gatekeeper
+      summary: List Verification Jobs
+      operationId: list_verification_jobs_v1_gatekeeper_jobs_get
+      parameters:
+      - name: agent_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Limit
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cursor
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/gatekeeper/jobs/{job_id}:
+    get:
+      tags:
+      - gatekeeper
+      summary: Get Verification Status
+      operationId: get_verification_status_v1_gatekeeper_jobs__job_id__get
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/gatekeeper/jobs/{job_id}/cancel:
+    post:
+      tags:
+      - gatekeeper
+      summary: Cancel Verification
+      operationId: cancel_verification_v1_gatekeeper_jobs__job_id__cancel_post
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Job Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/gatekeeper/proofs/{proof_id}:
+    get:
+      tags:
+      - gatekeeper
+      summary: Get Proof
+      operationId: get_proof_v1_gatekeeper_proofs__proof_id__get
+      parameters:
+      - name: proof_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Proof Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/gatekeeper/proofs/verify:
+    post:
+      tags:
+      - gatekeeper
+      summary: Verify Proof
+      operationId: verify_proof_v1_gatekeeper_proofs_verify_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyProofRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    SubmitVerificationRequest:
+      properties:
+        agent_id:
+          type: string
+          maxLength: 128
+          title: Agent Id
+        properties:
+          items:
+            $ref: '#/components/schemas/PropertySpecRequest'
+          type: array
+          maxItems: 100
+          minItems: 1
+          title: Properties
+        scope:
+          type: string
+          title: Scope
+          default: economic
+        timeout_seconds:
+          type: integer
+          maximum: 900.0
+          minimum: 10.0
+          title: Timeout Seconds
+          default: 300
+        webhook_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Webhook Url
+        idempotency_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Idempotency Key
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+      additionalProperties: false
+      type: object
+      required:
+      - agent_id
+      - properties
+      title: SubmitVerificationRequest
+      example:
+        agent_id: agent-alice
+        properties:
+        - name: balance_conservation
+          scope: economic
+          language: z3_smt2
+          expression: '(declare-const x Int)
+
+            (assert (> x 0))'
+          description: Check positive balance
+        scope: economic
+        timeout_seconds: 300
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    PropertySpecRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 128
+          title: Name
+        scope:
+          type: string
+          title: Scope
+          default: economic
+        language:
+          type: string
+          pattern: ^(z3_smt2|json_policy)$
+          title: Language
+          default: z3_smt2
+        expression:
+          type: string
+          maxLength: 1000000
+          title: Expression
+        description:
+          type: string
+          maxLength: 1000
+          title: Description
+          default: ''
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - expression
+      title: PropertySpecRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    VerifyProofRequest:
+      properties:
+        proof_hash:
+          type: string
+          maxLength: 128
+          title: Proof Hash
+      additionalProperties: false
+      type: object
+      required:
+      - proof_hash
+      title: VerifyProofRequest
+      example:
+        proof_hash: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: API key passed as Bearer token in the Authorization header.
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key passed directly in the X-API-Key header (alternative to Bearer).
+    X402Payment:
+      type: apiKey
+      in: header
+      name: X-PAYMENT
+      description: x402 payment proof for stateless authentication.
+x-refined-from:
+- greenhelix-net-openapi.json
+- greenhelix-net-a2a-commerce-gateway-openapi.yml
