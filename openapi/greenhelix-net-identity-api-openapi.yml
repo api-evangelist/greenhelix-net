@@ -1,8 +1,12 @@
 openapi: 3.2.0
 info:
-  title: Greenhelix Net Identity API
+  title: A2A Commerce Gateway Identity API
   version: 1.4.10
-  description: 'Operations tagged identity across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'A2A Commerce Gateway — agent-to-agent commerce infrastructure operated by Green Helix Consulting, LLC: billing and wallets, payment intents and escrow, subscriptions, Ed25519 agent identity and reputation, service marketplace, trust scoring, encrypted messaging and price negotiation, disputes, webhooks and an event bus.'
+  contact:
+    name: Green Helix
+    url: https://greenhelix.net
+    email: support@greenhelix.net
 servers:
 - url: https://api.greenhelix.net
   description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
@@ -548,6 +552,32 @@ components:
           avg_response_ms: 245
           error_rate: 0.01
           uptime: 0.999
+    VerifyAgentRequest:
+      properties:
+        message:
+          type: string
+          title: Message
+        signature:
+          type: string
+          title: Signature
+      additionalProperties: false
+      type: object
+      required:
+      - message
+      - signature
+      title: VerifyAgentRequest
+      example:
+        message: challenge-nonce-12345
+        signature: sig_hex_string...
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     RegisterAgentRequest:
       properties:
         agent_id:
@@ -580,32 +610,6 @@ components:
         agent_id: agent-alice
         name: Alice Agent
         public_key: ed25519:abc123...
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     IngestMetricsRequest:
       properties:
         agent_id:
@@ -642,6 +646,32 @@ components:
         metrics:
           requests_served: 15420
           uptime: 0.999
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     AddMemberRequest:
       properties:
         agent_id:
@@ -677,32 +707,6 @@ components:
       example:
         agent_id: agent-alice
         org_name: Acme AI Agents
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    VerifyAgentRequest:
-      properties:
-        message:
-          type: string
-          title: Message
-        signature:
-          type: string
-          title: Signature
-      additionalProperties: false
-      type: object
-      required:
-      - message
-      - signature
-      title: VerifyAgentRequest
-      example:
-        message: challenge-nonce-12345
-        signature: sig_hex_string...
   securitySchemes:
     BearerAuth:
       type: http
@@ -718,6 +722,10 @@ components:
       in: header
       name: X-PAYMENT
       description: x402 payment proof for stateless authentication.
-x-refined-from:
-- greenhelix-net-openapi.json
-- greenhelix-net-a2a-commerce-gateway-openapi.yml
+x-api-evangelist:
+  source: https://api.greenhelix.net/v1/openapi.json
+  fetched: '2026-09-19'
+  http_status: 200
+  bytes: 123527
+  original: openapi/_original/greenhelix-net-openapi.json
+  changes: servers[], info.description and info.contact added (the served document declares none); nothing else altered.

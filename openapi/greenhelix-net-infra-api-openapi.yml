@@ -1,8 +1,12 @@
 openapi: 3.2.0
 info:
-  title: Greenhelix Net Infra API
+  title: A2A Commerce Gateway Infra API
   version: 1.4.10
-  description: 'Operations tagged infra across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'A2A Commerce Gateway — agent-to-agent commerce infrastructure operated by Green Helix Consulting, LLC: billing and wallets, payment intents and escrow, subscriptions, Ed25519 agent identity and reputation, service marketplace, trust scoring, encrypted messaging and price negotiation, disputes, webhooks and an event bus.'
+  contact:
+    name: Green Helix
+    url: https://greenhelix.net
+    email: support@greenhelix.net
 servers:
 - url: https://api.greenhelix.net
   description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
@@ -485,6 +489,53 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    RevokeApiKeyRequest:
+      properties:
+        key_hash_prefix:
+          type: string
+          title: Key Hash Prefix
+      additionalProperties: false
+      type: object
+      required:
+      - key_hash_prefix
+      title: RevokeApiKeyRequest
+    RestoreDatabaseRequest:
+      properties:
+        backup_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Backup Path
+        filename:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filename
+        key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Key
+        key_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Key Id
+      additionalProperties: false
+      type: object
+      title: RestoreDatabaseRequest
+      description: 'Restore from a previous backup.
+
+
+        Either ``filename`` (preferred — matches what ``list_backups`` /
+
+        ``backup_database`` now return) or ``backup_path`` (legacy — full
+
+        path inside the backup dir) may be provided. ``filename`` is
+
+        resolved server-side against ``A2A_DATA_DIR/backups`` so callers
+
+        never need to know the absolute path.'
     RegisterWebhookRequest:
       properties:
         url:
@@ -512,25 +563,35 @@ components:
       - events
       - secret
       title: RegisterWebhookRequest
-    RevokeApiKeyRequest:
+    HTTPValidationError:
       properties:
-        key_hash_prefix:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PublishEventRequest:
+      properties:
+        event_type:
           type: string
-          title: Key Hash Prefix
+          title: Event Type
+        source:
+          type: string
+          title: Source
+        payload:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Payload
       additionalProperties: false
       type: object
       required:
-      - key_hash_prefix
-      title: RevokeApiKeyRequest
-    BackupDatabaseRequest:
-      properties:
-        encrypt:
-          type: boolean
-          title: Encrypt
-          default: false
-      additionalProperties: false
-      type: object
-      title: BackupDatabaseRequest
+      - event_type
+      - source
+      title: PublishEventRequest
     ValidationError:
       properties:
         loc:
@@ -572,63 +633,6 @@ components:
       - event_type
       - schema
       title: RegisterEventSchemaRequest
-    RestoreDatabaseRequest:
-      properties:
-        backup_path:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Backup Path
-        filename:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Filename
-        key:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Key
-        key_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Key Id
-      additionalProperties: false
-      type: object
-      title: RestoreDatabaseRequest
-      description: 'Restore from a previous backup.
-
-
-        Either ``filename`` (preferred — matches what ``list_backups`` /
-
-        ``backup_database`` now return) or ``backup_path`` (legacy — full
-
-        path inside the backup dir) may be provided. ``filename`` is
-
-        resolved server-side against ``A2A_DATA_DIR/backups`` so callers
-
-        never need to know the absolute path.'
-    PublishEventRequest:
-      properties:
-        event_type:
-          type: string
-          title: Event Type
-        source:
-          type: string
-          title: Source
-        payload:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Payload
-      additionalProperties: false
-      type: object
-      required:
-      - event_type
-      - source
-      title: PublishEventRequest
     RotateKeyRequest:
       properties:
         current_key:
@@ -639,15 +643,15 @@ components:
       required:
       - current_key
       title: RotateKeyRequest
-    HTTPValidationError:
+    BackupDatabaseRequest:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        encrypt:
+          type: boolean
+          title: Encrypt
+          default: false
+      additionalProperties: false
       type: object
-      title: HTTPValidationError
+      title: BackupDatabaseRequest
   securitySchemes:
     BearerAuth:
       type: http
@@ -663,6 +667,10 @@ components:
       in: header
       name: X-PAYMENT
       description: x402 payment proof for stateless authentication.
-x-refined-from:
-- greenhelix-net-openapi.json
-- greenhelix-net-a2a-commerce-gateway-openapi.yml
+x-api-evangelist:
+  source: https://api.greenhelix.net/v1/openapi.json
+  fetched: '2026-09-19'
+  http_status: 200
+  bytes: 123527
+  original: openapi/_original/greenhelix-net-openapi.json
+  changes: servers[], info.description and info.contact added (the served document declares none); nothing else altered.

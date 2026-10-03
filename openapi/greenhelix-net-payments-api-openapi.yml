@@ -1,8 +1,12 @@
 openapi: 3.2.0
 info:
-  title: Greenhelix Net Payments API
+  title: A2A Commerce Gateway Payments API
   version: 1.4.10
-  description: 'Operations tagged payments across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'A2A Commerce Gateway — agent-to-agent commerce infrastructure operated by Green Helix Consulting, LLC: billing and wallets, payment intents and escrow, subscriptions, Ed25519 agent identity and reputation, service marketplace, trust scoring, encrypted messaging and price negotiation, disputes, webhooks and an event bus.'
+  contact:
+    name: Green Helix
+    url: https://greenhelix.net
+    email: support@greenhelix.net
 servers:
 - url: https://api.greenhelix.net
   description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
@@ -642,6 +646,92 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    RefundSettlementRequest:
+      properties:
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          - type: 'null'
+          title: Amount
+        reason:
+          type: string
+          maxLength: 2000
+          title: Reason
+          default: ''
+      additionalProperties: false
+      type: object
+      title: RefundSettlementRequest
+      example:
+        amount: '10.00'
+        reason: Service not delivered
+    CreatePerformanceEscrowRequest:
+      properties:
+        payer:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payer
+        payee:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payee
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        metric_name:
+          type: string
+          title: Metric Name
+        threshold:
+          type: string
+          title: Threshold
+        description:
+          type: string
+          maxLength: 2000
+          title: Description
+          default: ''
+        conditions:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Conditions
+      additionalProperties: false
+      type: object
+      required:
+      - payer
+      - payee
+      - amount
+      - metric_name
+      - threshold
+      title: CreatePerformanceEscrowRequest
+      example:
+        amount: '25.00'
+        conditions:
+          min_samples: 100
+        description: ML model delivery
+        metric_name: accuracy
+        payee: agent-bob
+        payer: agent-alice
+        threshold: '>=0.95'
     CreateEscrowRequest:
       properties:
         payer:
@@ -695,6 +785,22 @@ components:
         payee: agent-bob
         payer: agent-alice
         timeout_hours: 72
+    SplitEntry:
+      properties:
+        payee:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payee
+        percentage:
+          type: number
+          title: Percentage
+      additionalProperties: false
+      type: object
+      required:
+      - payee
+      - percentage
+      title: SplitEntry
     CreateIntentRequest:
       properties:
         payer:
@@ -794,61 +900,6 @@ components:
           percentage: 60
         - payee: agent-carol
           percentage: 40
-    CreatePerformanceEscrowRequest:
-      properties:
-        payer:
-          type: string
-          maxLength: 128
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
-          title: Payer
-        payee:
-          type: string
-          maxLength: 128
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
-          title: Payee
-        amount:
-          anyOf:
-          - type: number
-            maximum: 1000000000.0
-            exclusiveMinimum: 0.0
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
-          title: Amount
-        metric_name:
-          type: string
-          title: Metric Name
-        threshold:
-          type: string
-          title: Threshold
-        description:
-          type: string
-          maxLength: 2000
-          title: Description
-          default: ''
-        conditions:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Conditions
-      additionalProperties: false
-      type: object
-      required:
-      - payer
-      - payee
-      - amount
-      - metric_name
-      - threshold
-      title: CreatePerformanceEscrowRequest
-      example:
-        amount: '25.00'
-        conditions:
-          min_samples: 100
-        description: ML model delivery
-        metric_name: accuracy
-        payee: agent-bob
-        payer: agent-alice
-        threshold: '>=0.95'
     ValidationError:
       properties:
         loc:
@@ -875,15 +926,6 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     CreateSubscriptionRequest:
       properties:
         payer:
@@ -936,28 +978,6 @@ components:
         interval: monthly
         payee: agent-bob
         payer: agent-alice
-    RefundSettlementRequest:
-      properties:
-        amount:
-          anyOf:
-          - type: number
-            maximum: 1000000000.0
-            exclusiveMinimum: 0.0
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
-          - type: 'null'
-          title: Amount
-        reason:
-          type: string
-          maxLength: 2000
-          title: Reason
-          default: ''
-      additionalProperties: false
-      type: object
-      title: RefundSettlementRequest
-      example:
-        amount: '10.00'
-        reason: Service not delivered
     PartialCaptureRequest:
       properties:
         amount:
@@ -975,22 +995,6 @@ components:
       title: PartialCaptureRequest
       example:
         amount: '15.00'
-    SplitEntry:
-      properties:
-        payee:
-          type: string
-          maxLength: 128
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
-          title: Payee
-        percentage:
-          type: number
-          title: Percentage
-      additionalProperties: false
-      type: object
-      required:
-      - payee
-      - percentage
-      title: SplitEntry
   securitySchemes:
     BearerAuth:
       type: http
@@ -1006,6 +1010,10 @@ components:
       in: header
       name: X-PAYMENT
       description: x402 payment proof for stateless authentication.
-x-refined-from:
-- greenhelix-net-openapi.json
-- greenhelix-net-a2a-commerce-gateway-openapi.yml
+x-api-evangelist:
+  source: https://api.greenhelix.net/v1/openapi.json
+  fetched: '2026-09-19'
+  http_status: 200
+  bytes: 123527
+  original: openapi/_original/greenhelix-net-openapi.json
+  changes: servers[], info.description and info.contact added (the served document declares none); nothing else altered.

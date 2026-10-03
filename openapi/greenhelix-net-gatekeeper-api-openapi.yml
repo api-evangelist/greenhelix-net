@@ -1,8 +1,12 @@
 openapi: 3.2.0
 info:
-  title: Greenhelix Net Gatekeeper API
+  title: A2A Commerce Gateway Gatekeeper API
   version: 1.4.10
-  description: 'Operations tagged gatekeeper across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'A2A Commerce Gateway — agent-to-agent commerce infrastructure operated by Green Helix Consulting, LLC: billing and wallets, payment intents and escrow, subscriptions, Ed25519 agent identity and reputation, service marketplace, trust scoring, encrypted messaging and price negotiation, disputes, webhooks and an event bus.'
+  contact:
+    name: Green Helix
+    url: https://greenhelix.net
+    email: support@greenhelix.net
 servers:
 - url: https://api.greenhelix.net
   description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
@@ -189,6 +193,58 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    PropertySpecRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 128
+          title: Name
+        scope:
+          type: string
+          title: Scope
+          default: economic
+        language:
+          type: string
+          pattern: ^(z3_smt2|json_policy)$
+          title: Language
+          default: z3_smt2
+        expression:
+          type: string
+          maxLength: 1000000
+          title: Expression
+        description:
+          type: string
+          maxLength: 1000
+          title: Description
+          default: ''
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - expression
+      title: PropertySpecRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    VerifyProofRequest:
+      properties:
+        proof_hash:
+          type: string
+          maxLength: 128
+          title: Proof Hash
+      additionalProperties: false
+      type: object
+      required:
+      - proof_hash
+      title: VerifyProofRequest
+      example:
+        proof_hash: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2
     SubmitVerificationRequest:
       properties:
         agent_id:
@@ -272,58 +328,6 @@ components:
       - msg
       - type
       title: ValidationError
-    PropertySpecRequest:
-      properties:
-        name:
-          type: string
-          maxLength: 128
-          title: Name
-        scope:
-          type: string
-          title: Scope
-          default: economic
-        language:
-          type: string
-          pattern: ^(z3_smt2|json_policy)$
-          title: Language
-          default: z3_smt2
-        expression:
-          type: string
-          maxLength: 1000000
-          title: Expression
-        description:
-          type: string
-          maxLength: 1000
-          title: Description
-          default: ''
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - expression
-      title: PropertySpecRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    VerifyProofRequest:
-      properties:
-        proof_hash:
-          type: string
-          maxLength: 128
-          title: Proof Hash
-      additionalProperties: false
-      type: object
-      required:
-      - proof_hash
-      title: VerifyProofRequest
-      example:
-        proof_hash: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2
   securitySchemes:
     BearerAuth:
       type: http
@@ -339,6 +343,10 @@ components:
       in: header
       name: X-PAYMENT
       description: x402 payment proof for stateless authentication.
-x-refined-from:
-- greenhelix-net-openapi.json
-- greenhelix-net-a2a-commerce-gateway-openapi.yml
+x-api-evangelist:
+  source: https://api.greenhelix.net/v1/openapi.json
+  fetched: '2026-09-19'
+  http_status: 200
+  bytes: 123527
+  original: openapi/_original/greenhelix-net-openapi.json
+  changes: servers[], info.description and info.contact added (the served document declares none); nothing else altered.

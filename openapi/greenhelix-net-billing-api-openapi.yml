@@ -1,8 +1,12 @@
 openapi: 3.2.0
 info:
-  title: Greenhelix Net Billing API
+  title: A2A Commerce Gateway Billing API
   version: 1.4.10
-  description: 'Operations tagged billing across 2 of this provider''s published API definitions: greenhelix-net-openapi.json, greenhelix-net-a2a-commerce-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'A2A Commerce Gateway — agent-to-agent commerce infrastructure operated by Green Helix Consulting, LLC: billing and wallets, payment intents and escrow, subscriptions, Ed25519 agent identity and reputation, service marketplace, trust scoring, encrypted messaging and price negotiation, disputes, webhooks and an event bus.'
+  contact:
+    name: Green Helix
+    url: https://greenhelix.net
+    email: support@greenhelix.net
 servers:
 - url: https://api.greenhelix.net
   description: Production (the host that serves this document at /v1/openapi.json; named by the agent card url, ai-plugin.json api.url, AGENTS.md and both SDK READMEs)
@@ -661,87 +665,29 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ValidationError:
+    CreateBillingApiKeyRequest:
       properties:
-        loc:
+        tier:
+          type: string
+          title: Tier
+          default: free
+      additionalProperties: false
+      type: object
+      title: CreateBillingApiKeyRequest
+      description: 'Self-service API key creation — v1.2.4 audit P0-1 successor
+
+        of the former ``POST /v1/infra/keys``.'
+      example:
+        tier: free
+    HTTPValidationError:
+      properties:
+        detail:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
+          title: Detail
       type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ConvertCurrencyRequest:
-      properties:
-        amount:
-          anyOf:
-          - type: number
-            maximum: 1000000000.0
-            exclusiveMinimum: 0.0
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
-          title: Amount
-        from_currency:
-          type: string
-          title: From Currency
-        to_currency:
-          type: string
-          title: To Currency
-      additionalProperties: false
-      type: object
-      required:
-      - amount
-      - from_currency
-      - to_currency
-      title: ConvertCurrencyRequest
-      example:
-        amount: '100.00'
-        from_currency: CREDITS
-        to_currency: USD
-    DepositRequest:
-      properties:
-        amount:
-          anyOf:
-          - type: number
-            maximum: 1000000000.0
-            exclusiveMinimum: 0.0
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
-          title: Amount
-        currency:
-          type: string
-          title: Currency
-          default: CREDITS
-        description:
-          type: string
-          maxLength: 2000
-          title: Description
-          default: ''
-      additionalProperties: false
-      type: object
-      required:
-      - amount
-      title: DepositRequest
-      example:
-        amount: '50.00'
-        currency: CREDITS
-        description: Top-up via Stripe
+      title: HTTPValidationError
     BudgetCapRequest:
       properties:
         daily:
@@ -769,56 +715,6 @@ components:
         alert_threshold: 0.8
         daily_cap: '100.00'
         monthly_cap: '2000.00'
-    CreateWalletRequest:
-      properties:
-        agent_id:
-          type: string
-          maxLength: 128
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
-          title: Agent Id
-        initial_balance:
-          anyOf:
-          - type: number
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          title: Initial Balance
-          default: '0'
-        signup_bonus:
-          type: boolean
-          title: Signup Bonus
-          default: true
-      additionalProperties: false
-      type: object
-      required:
-      - agent_id
-      title: CreateWalletRequest
-      example:
-        agent_id: agent-alice
-        initial_balance: '100.00'
-        signup_bonus: true
-    CreateBillingApiKeyRequest:
-      properties:
-        tier:
-          type: string
-          title: Tier
-          default: free
-      additionalProperties: false
-      type: object
-      title: CreateBillingApiKeyRequest
-      description: 'Self-service API key creation — v1.2.4 audit P0-1 successor
-
-        of the former ``POST /v1/infra/keys``.'
-      example:
-        tier: free
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     WithdrawRequest:
       properties:
         amount:
@@ -847,6 +743,114 @@ components:
         amount: '25.00'
         currency: CREDITS
         description: Payout to external wallet
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    DepositRequest:
+      properties:
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        currency:
+          type: string
+          title: Currency
+          default: CREDITS
+        description:
+          type: string
+          maxLength: 2000
+          title: Description
+          default: ''
+      additionalProperties: false
+      type: object
+      required:
+      - amount
+      title: DepositRequest
+      example:
+        amount: '50.00'
+        currency: CREDITS
+        description: Top-up via Stripe
+    ConvertCurrencyRequest:
+      properties:
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        from_currency:
+          type: string
+          title: From Currency
+        to_currency:
+          type: string
+          title: To Currency
+      additionalProperties: false
+      type: object
+      required:
+      - amount
+      - from_currency
+      - to_currency
+      title: ConvertCurrencyRequest
+      example:
+        amount: '100.00'
+        from_currency: CREDITS
+        to_currency: USD
+    CreateWalletRequest:
+      properties:
+        agent_id:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Agent Id
+        initial_balance:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          title: Initial Balance
+          default: '0'
+        signup_bonus:
+          type: boolean
+          title: Signup Bonus
+          default: true
+      additionalProperties: false
+      type: object
+      required:
+      - agent_id
+      title: CreateWalletRequest
+      example:
+        agent_id: agent-alice
+        initial_balance: '100.00'
+        signup_bonus: true
   securitySchemes:
     BearerAuth:
       type: http
@@ -862,6 +866,10 @@ components:
       in: header
       name: X-PAYMENT
       description: x402 payment proof for stateless authentication.
-x-refined-from:
-- greenhelix-net-openapi.json
-- greenhelix-net-a2a-commerce-gateway-openapi.yml
+x-api-evangelist:
+  source: https://api.greenhelix.net/v1/openapi.json
+  fetched: '2026-09-19'
+  http_status: 200
+  bytes: 123527
+  original: openapi/_original/greenhelix-net-openapi.json
+  changes: servers[], info.description and info.contact added (the served document declares none); nothing else altered.
