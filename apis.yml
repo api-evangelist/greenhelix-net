@@ -88,6 +88,8 @@ apis:
   humanURL: https://api.greenhelix.net/docs
   baseURL: https://api.greenhelix.net
   tags:
+  - Billing
+  tags_raw:
   - billing
   properties:
   - type: OpenAPI
@@ -128,6 +130,8 @@ apis:
   humanURL: https://api.greenhelix.net/docs
   baseURL: https://api.greenhelix.net
   tags:
+  - Disputes
+  tags_raw:
   - disputes
   properties:
   - type: OpenAPI
@@ -148,6 +152,8 @@ apis:
   humanURL: https://api.greenhelix.net/docs
   baseURL: https://api.greenhelix.net
   tags:
+  - Event
+  tags_raw:
   - Events
   properties:
   - type: OpenAPI
@@ -228,6 +234,8 @@ apis:
   humanURL: https://api.greenhelix.net/docs
   baseURL: https://api.greenhelix.net
   tags:
+  - Identity
+  tags_raw:
   - identity
   properties:
   - type: OpenAPI
@@ -248,6 +256,8 @@ apis:
   humanURL: https://api.greenhelix.net/docs
   baseURL: https://api.greenhelix.net
   tags:
+  - Infra
+  tags_raw:
   - infra
   properties:
   - type: OpenAPI
@@ -288,6 +298,8 @@ apis:
   humanURL: https://api.greenhelix.net/docs
   baseURL: https://api.greenhelix.net
   tags:
+  - Marketplace
+  tags_raw:
   - marketplace
   properties:
   - type: OpenAPI
@@ -308,6 +320,8 @@ apis:
   humanURL: https://api.greenhelix.net/docs
   baseURL: https://api.greenhelix.net
   tags:
+  - Messaging
+  tags_raw:
   - messaging
   properties:
   - type: OpenAPI
@@ -348,6 +362,8 @@ apis:
   humanURL: https://api.greenhelix.net/docs
   baseURL: https://api.greenhelix.net
   tags:
+  - Payments
+  tags_raw:
   - payments
   properties:
   - type: OpenAPI
@@ -468,6 +484,8 @@ apis:
   humanURL: https://api.greenhelix.net/docs
   baseURL: https://api.greenhelix.net
   tags:
+  - Trust
+  tags_raw:
   - trust
   properties:
   - type: OpenAPI
@@ -508,6 +526,9 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: CapabilityMap
+  url: capabilities/greenhelix-net-capability-edges.yml
+  name: Green Helix Business Capability Map
 - type: Overlay
   url: overlays/greenhelix-net-a2a-commerce-gateway-overlay.yaml
 - type: DomainSecurity
