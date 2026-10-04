@@ -234,29 +234,6 @@ components:
       additionalProperties: false
       type: object
       title: UpdateServerRequest
-    RegisterServerRequest:
-      properties:
-        name:
-          type: string
-          title: Name
-        url:
-          type: string
-          title: Url
-        transport_type:
-          type: string
-          title: Transport Type
-          default: http
-        server_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Server Id
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - url
-      title: RegisterServerRequest
     ValidationError:
       properties:
         loc:
@@ -283,6 +260,29 @@ components:
       - msg
       - type
       title: ValidationError
+    RegisterServerRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        url:
+          type: string
+          title: Url
+        transport_type:
+          type: string
+          title: Transport Type
+          default: http
+        server_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Server Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - url
+      title: RegisterServerRequest
     HTTPValidationError:
       properties:
         detail:

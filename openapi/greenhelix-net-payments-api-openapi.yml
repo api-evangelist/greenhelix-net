@@ -646,17 +646,18 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    HTTPValidationError:
+    CreateEscrowRequest:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    RefundSettlementRequest:
-      properties:
+        payer:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payer
+        payee:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payee
         amount:
           anyOf:
           - type: number
@@ -664,19 +665,85 @@ components:
             exclusiveMinimum: 0.0
           - type: string
             pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
-          - type: 'null'
           title: Amount
-        reason:
+        description:
           type: string
           maxLength: 2000
-          title: Reason
+          title: Description
           default: ''
+        currency:
+          type: string
+          title: Currency
+          default: CREDITS
+        timeout_hours:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Timeout Hours
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
       additionalProperties: false
       type: object
-      title: RefundSettlementRequest
+      required:
+      - payer
+      - payee
+      - amount
+      title: CreateEscrowRequest
       example:
-        amount: '10.00'
-        reason: Service not delivered
+        amount: '50.00'
+        description: Milestone delivery
+        payee: agent-bob
+        payer: agent-alice
+        timeout_hours: 72
+    CreateSplitIntentRequest:
+      properties:
+        payer:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payer
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        splits:
+          items:
+            $ref: '#/components/schemas/SplitEntry'
+          type: array
+          title: Splits
+        description:
+          type: string
+          maxLength: 2000
+          title: Description
+          default: ''
+        currency:
+          type: string
+          title: Currency
+          default: CREDITS
+      additionalProperties: false
+      type: object
+      required:
+      - payer
+      - amount
+      - splits
+      title: CreateSplitIntentRequest
+      example:
+        amount: '100.00'
+        description: Revenue split
+        payer: agent-alice
+        splits:
+        - payee: agent-bob
+          percentage: 60
+        - payee: agent-carol
+          percentage: 40
     CreatePerformanceEscrowRequest:
       properties:
         payer:
@@ -732,75 +799,32 @@ components:
         payee: agent-bob
         payer: agent-alice
         threshold: '>=0.95'
-    CreateEscrowRequest:
+    ValidationError:
       properties:
-        payer:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
           type: string
-          maxLength: 128
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
-          title: Payer
-        payee:
+          title: Message
+        type:
           type: string
-          maxLength: 128
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
-          title: Payee
-        amount:
-          anyOf:
-          - type: number
-            maximum: 1000000000.0
-            exclusiveMinimum: 0.0
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
-          title: Amount
-        description:
-          type: string
-          maxLength: 2000
-          title: Description
-          default: ''
-        currency:
-          type: string
-          title: Currency
-          default: CREDITS
-        timeout_hours:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Timeout Hours
-        metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Metadata
-      additionalProperties: false
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
       type: object
       required:
-      - payer
-      - payee
-      - amount
-      title: CreateEscrowRequest
-      example:
-        amount: '50.00'
-        description: Milestone delivery
-        payee: agent-bob
-        payer: agent-alice
-        timeout_hours: 72
-    SplitEntry:
-      properties:
-        payee:
-          type: string
-          maxLength: 128
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
-          title: Payee
-        percentage:
-          type: number
-          title: Percentage
-      additionalProperties: false
-      type: object
-      required:
-      - payee
-      - percentage
-      title: SplitEntry
+      - loc
+      - msg
+      - type
+      title: ValidationError
     CreateIntentRequest:
       properties:
         payer:
@@ -855,13 +879,30 @@ components:
         description: Data analysis service
         payee: agent-bob
         payer: agent-alice
-    CreateSplitIntentRequest:
+    RefundSettlementRequest:
       properties:
-        payer:
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          - type: 'null'
+          title: Amount
+        reason:
           type: string
-          maxLength: 128
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
-          title: Payer
+          maxLength: 2000
+          title: Reason
+          default: ''
+      additionalProperties: false
+      type: object
+      title: RefundSettlementRequest
+      example:
+        amount: '10.00'
+        reason: Service not delivered
+    PartialCaptureRequest:
+      properties:
         amount:
           anyOf:
           - type: number
@@ -870,62 +911,13 @@ components:
           - type: string
             pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
           title: Amount
-        splits:
-          items:
-            $ref: '#/components/schemas/SplitEntry'
-          type: array
-          title: Splits
-        description:
-          type: string
-          maxLength: 2000
-          title: Description
-          default: ''
-        currency:
-          type: string
-          title: Currency
-          default: CREDITS
       additionalProperties: false
       type: object
       required:
-      - payer
       - amount
-      - splits
-      title: CreateSplitIntentRequest
+      title: PartialCaptureRequest
       example:
-        amount: '100.00'
-        description: Revenue split
-        payer: agent-alice
-        splits:
-        - payee: agent-bob
-          percentage: 60
-        - payee: agent-carol
-          percentage: 40
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+        amount: '15.00'
     CreateSubscriptionRequest:
       properties:
         payer:
@@ -978,23 +970,31 @@ components:
         interval: monthly
         payee: agent-bob
         payer: agent-alice
-    PartialCaptureRequest:
+    SplitEntry:
       properties:
-        amount:
-          anyOf:
-          - type: number
-            maximum: 1000000000.0
-            exclusiveMinimum: 0.0
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
-          title: Amount
+        payee:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payee
+        percentage:
+          type: number
+          title: Percentage
       additionalProperties: false
       type: object
       required:
-      - amount
-      title: PartialCaptureRequest
-      example:
-        amount: '15.00'
+      - payee
+      - percentage
+      title: SplitEntry
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     BearerAuth:
       type: http

@@ -531,27 +531,24 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    SubmitMetricsRequest:
+    AddMemberRequest:
       properties:
-        metrics:
-          additionalProperties: true
-          type: object
-          title: Metrics
-        data_source:
+        agent_id:
           type: string
-          title: Data Source
-          default: self_reported
+          maxLength: 128
+          title: Agent Id
+        role:
+          type: string
+          title: Role
+          default: member
       additionalProperties: false
       type: object
       required:
-      - metrics
-      title: SubmitMetricsRequest
+      - agent_id
+      title: AddMemberRequest
       example:
-        data_source: self_reported
-        metrics:
-          avg_response_ms: 245
-          error_rate: 0.01
-          uptime: 0.999
+        agent_id: agent-bob
+        role: member
     VerifyAgentRequest:
       properties:
         message:
@@ -569,47 +566,49 @@ components:
       example:
         message: challenge-nonce-12345
         signature: sig_hex_string...
-    HTTPValidationError:
+    ValidationError:
       properties:
-        detail:
+        loc:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Detail
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
       type: object
-      title: HTTPValidationError
-    RegisterAgentRequest:
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    CreateOrgRequest:
       properties:
+        org_name:
+          type: string
+          title: Org Name
         agent_id:
           type: string
-          maxLength: 128
           title: Agent Id
-        public_key:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Public Key
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        capabilities:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Capabilities
+          default: ''
       additionalProperties: false
       type: object
       required:
-      - agent_id
-      title: RegisterAgentRequest
+      - org_name
+      title: CreateOrgRequest
       example:
         agent_id: agent-alice
-        name: Alice Agent
-        public_key: ed25519:abc123...
+        org_name: Acme AI Agents
     IngestMetricsRequest:
       properties:
         agent_id:
@@ -646,67 +645,68 @@ components:
         metrics:
           requests_served: 15420
           uptime: 0.999
-    ValidationError:
+    SubmitMetricsRequest:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
+        metrics:
+          additionalProperties: true
           type: object
-          title: Context
+          title: Metrics
+        data_source:
+          type: string
+          title: Data Source
+          default: self_reported
+      additionalProperties: false
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    AddMemberRequest:
+      - metrics
+      title: SubmitMetricsRequest
+      example:
+        data_source: self_reported
+        metrics:
+          avg_response_ms: 245
+          error_rate: 0.01
+          uptime: 0.999
+    RegisterAgentRequest:
       properties:
         agent_id:
           type: string
           maxLength: 128
           title: Agent Id
-        role:
-          type: string
-          title: Role
-          default: member
+        public_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Public Key
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        capabilities:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Capabilities
       additionalProperties: false
       type: object
       required:
       - agent_id
-      title: AddMemberRequest
-      example:
-        agent_id: agent-bob
-        role: member
-    CreateOrgRequest:
-      properties:
-        org_name:
-          type: string
-          title: Org Name
-        agent_id:
-          type: string
-          title: Agent Id
-          default: ''
-      additionalProperties: false
-      type: object
-      required:
-      - org_name
-      title: CreateOrgRequest
+      title: RegisterAgentRequest
       example:
         agent_id: agent-alice
-        org_name: Acme AI Agents
+        name: Alice Agent
+        public_key: ed25519:abc123...
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     BearerAuth:
       type: http

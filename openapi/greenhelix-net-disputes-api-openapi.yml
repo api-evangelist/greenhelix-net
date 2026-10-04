@@ -170,15 +170,24 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    HTTPValidationError:
+    OpenDisputeRequest:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        escrow_id:
+          type: string
+          title: Escrow Id
+        opener:
+          type: string
+          title: Opener
+        reason:
+          type: string
+          title: Reason
+          default: ''
+      additionalProperties: false
       type: object
-      title: HTTPValidationError
+      required:
+      - escrow_id
+      - opener
+      title: OpenDisputeRequest
     ValidationError:
       properties:
         loc:
@@ -205,20 +214,6 @@ components:
       - msg
       - type
       title: ValidationError
-    RespondToDisputeRequest:
-      properties:
-        respondent:
-          type: string
-          title: Respondent
-        response:
-          type: string
-          title: Response
-      additionalProperties: false
-      type: object
-      required:
-      - respondent
-      - response
-      title: RespondToDisputeRequest
     ResolveDisputeRequest:
       properties:
         resolution:
@@ -237,24 +232,29 @@ components:
       - resolution
       - resolved_by
       title: ResolveDisputeRequest
-    OpenDisputeRequest:
+    RespondToDisputeRequest:
       properties:
-        escrow_id:
+        respondent:
           type: string
-          title: Escrow Id
-        opener:
+          title: Respondent
+        response:
           type: string
-          title: Opener
-        reason:
-          type: string
-          title: Reason
-          default: ''
+          title: Response
       additionalProperties: false
       type: object
       required:
-      - escrow_id
-      - opener
-      title: OpenDisputeRequest
+      - respondent
+      - response
+      title: RespondToDisputeRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     BearerAuth:
       type: http

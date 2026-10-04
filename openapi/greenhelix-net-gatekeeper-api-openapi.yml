@@ -193,58 +193,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    PropertySpecRequest:
-      properties:
-        name:
-          type: string
-          maxLength: 128
-          title: Name
-        scope:
-          type: string
-          title: Scope
-          default: economic
-        language:
-          type: string
-          pattern: ^(z3_smt2|json_policy)$
-          title: Language
-          default: z3_smt2
-        expression:
-          type: string
-          maxLength: 1000000
-          title: Expression
-        description:
-          type: string
-          maxLength: 1000
-          title: Description
-          default: ''
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - expression
-      title: PropertySpecRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    VerifyProofRequest:
-      properties:
-        proof_hash:
-          type: string
-          maxLength: 128
-          title: Proof Hash
-      additionalProperties: false
-      type: object
-      required:
-      - proof_hash
-      title: VerifyProofRequest
-      example:
-        proof_hash: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2
     SubmitVerificationRequest:
       properties:
         agent_id:
@@ -302,6 +250,36 @@ components:
           description: Check positive balance
         scope: economic
         timeout_seconds: 300
+    PropertySpecRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 128
+          title: Name
+        scope:
+          type: string
+          title: Scope
+          default: economic
+        language:
+          type: string
+          pattern: ^(z3_smt2|json_policy)$
+          title: Language
+          default: z3_smt2
+        expression:
+          type: string
+          maxLength: 1000000
+          title: Expression
+        description:
+          type: string
+          maxLength: 1000
+          title: Description
+          default: ''
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - expression
+      title: PropertySpecRequest
     ValidationError:
       properties:
         loc:
@@ -328,6 +306,28 @@ components:
       - msg
       - type
       title: ValidationError
+    VerifyProofRequest:
+      properties:
+        proof_hash:
+          type: string
+          maxLength: 128
+          title: Proof Hash
+      additionalProperties: false
+      type: object
+      required:
+      - proof_hash
+      title: VerifyProofRequest
+      example:
+        proof_hash: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     BearerAuth:
       type: http

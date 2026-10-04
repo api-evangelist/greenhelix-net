@@ -115,80 +115,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    MessageType:
-      type: string
-      enum:
-      - text
-      - price_negotiation
-      - task_specification
-      - counter_offer
-      - accept
-      - reject
-      title: MessageType
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    NegotiatePriceRequest:
-      properties:
-        initiator:
-          type: string
-          title: Initiator
-        responder:
-          type: string
-          title: Responder
-        amount:
-          anyOf:
-          - type: number
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          title: Amount
-        service_id:
-          type: string
-          title: Service Id
-          default: ''
-        expires_hours:
-          type: integer
-          title: Expires Hours
-          default: 24
-      additionalProperties: false
-      type: object
-      required:
-      - initiator
-      - responder
-      - amount
-      title: NegotiatePriceRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     SendMessageRequest:
       properties:
         sender:
@@ -225,6 +151,80 @@ components:
       - recipient
       - message_type
       title: SendMessageRequest
+    MessageType:
+      type: string
+      enum:
+      - text
+      - price_negotiation
+      - task_specification
+      - counter_offer
+      - accept
+      - reject
+      title: MessageType
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    NegotiatePriceRequest:
+      properties:
+        initiator:
+          type: string
+          title: Initiator
+        responder:
+          type: string
+          title: Responder
+        amount:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          title: Amount
+        service_id:
+          type: string
+          title: Service Id
+          default: ''
+        expires_hours:
+          type: integer
+          title: Expires Hours
+          default: 24
+      additionalProperties: false
+      type: object
+      required:
+      - initiator
+      - responder
+      - amount
+      title: NegotiatePriceRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     BearerAuth:
       type: http

@@ -499,43 +499,6 @@ components:
       required:
       - key_hash_prefix
       title: RevokeApiKeyRequest
-    RestoreDatabaseRequest:
-      properties:
-        backup_path:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Backup Path
-        filename:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Filename
-        key:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Key
-        key_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Key Id
-      additionalProperties: false
-      type: object
-      title: RestoreDatabaseRequest
-      description: 'Restore from a previous backup.
-
-
-        Either ``filename`` (preferred — matches what ``list_backups`` /
-
-        ``backup_database`` now return) or ``backup_path`` (legacy — full
-
-        path inside the backup dir) may be provided. ``filename`` is
-
-        resolved server-side against ``A2A_DATA_DIR/backups`` so callers
-
-        never need to know the absolute path.'
     RegisterWebhookRequest:
       properties:
         url:
@@ -563,35 +526,6 @@ components:
       - events
       - secret
       title: RegisterWebhookRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    PublishEventRequest:
-      properties:
-        event_type:
-          type: string
-          title: Event Type
-        source:
-          type: string
-          title: Source
-        payload:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Payload
-      additionalProperties: false
-      type: object
-      required:
-      - event_type
-      - source
-      title: PublishEventRequest
     ValidationError:
       properties:
         loc:
@@ -643,6 +577,63 @@ components:
       required:
       - current_key
       title: RotateKeyRequest
+    RestoreDatabaseRequest:
+      properties:
+        backup_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Backup Path
+        filename:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filename
+        key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Key
+        key_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Key Id
+      additionalProperties: false
+      type: object
+      title: RestoreDatabaseRequest
+      description: 'Restore from a previous backup.
+
+
+        Either ``filename`` (preferred — matches what ``list_backups`` /
+
+        ``backup_database`` now return) or ``backup_path`` (legacy — full
+
+        path inside the backup dir) may be provided. ``filename`` is
+
+        resolved server-side against ``A2A_DATA_DIR/backups`` so callers
+
+        never need to know the absolute path.'
+    PublishEventRequest:
+      properties:
+        event_type:
+          type: string
+          title: Event Type
+        source:
+          type: string
+          title: Source
+        payload:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Payload
+      additionalProperties: false
+      type: object
+      required:
+      - event_type
+      - source
+      title: PublishEventRequest
     BackupDatabaseRequest:
       properties:
         encrypt:
@@ -652,6 +643,15 @@ components:
       additionalProperties: false
       type: object
       title: BackupDatabaseRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     BearerAuth:
       type: http

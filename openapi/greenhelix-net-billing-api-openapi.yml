@@ -665,6 +665,33 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ConvertCurrencyRequest:
+      properties:
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        from_currency:
+          type: string
+          title: From Currency
+        to_currency:
+          type: string
+          title: To Currency
+      additionalProperties: false
+      type: object
+      required:
+      - amount
+      - from_currency
+      - to_currency
+      title: ConvertCurrencyRequest
+      example:
+        amount: '100.00'
+        from_currency: CREDITS
+        to_currency: USD
     CreateBillingApiKeyRequest:
       properties:
         tier:
@@ -679,15 +706,87 @@ components:
         of the former ``POST /v1/infra/keys``.'
       example:
         tier: free
-    HTTPValidationError:
+    CreateWalletRequest:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        agent_id:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Agent Id
+        initial_balance:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          title: Initial Balance
+          default: '0'
+        signup_bonus:
+          type: boolean
+          title: Signup Bonus
+          default: true
+      additionalProperties: false
       type: object
-      title: HTTPValidationError
+      required:
+      - agent_id
+      title: CreateWalletRequest
+      example:
+        agent_id: agent-alice
+        initial_balance: '100.00'
+        signup_bonus: true
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    DepositRequest:
+      properties:
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        currency:
+          type: string
+          title: Currency
+          default: CREDITS
+        description:
+          type: string
+          maxLength: 2000
+          title: Description
+          default: ''
+      additionalProperties: false
+      type: object
+      required:
+      - amount
+      title: DepositRequest
+      example:
+        amount: '50.00'
+        currency: CREDITS
+        description: Top-up via Stripe
     BudgetCapRequest:
       properties:
         daily:
@@ -743,114 +842,15 @@ components:
         amount: '25.00'
         currency: CREDITS
         description: Payout to external wallet
-    ValidationError:
+    HTTPValidationError:
       properties:
-        loc:
+        detail:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
+          title: Detail
       type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    DepositRequest:
-      properties:
-        amount:
-          anyOf:
-          - type: number
-            maximum: 1000000000.0
-            exclusiveMinimum: 0.0
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
-          title: Amount
-        currency:
-          type: string
-          title: Currency
-          default: CREDITS
-        description:
-          type: string
-          maxLength: 2000
-          title: Description
-          default: ''
-      additionalProperties: false
-      type: object
-      required:
-      - amount
-      title: DepositRequest
-      example:
-        amount: '50.00'
-        currency: CREDITS
-        description: Top-up via Stripe
-    ConvertCurrencyRequest:
-      properties:
-        amount:
-          anyOf:
-          - type: number
-            maximum: 1000000000.0
-            exclusiveMinimum: 0.0
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
-          title: Amount
-        from_currency:
-          type: string
-          title: From Currency
-        to_currency:
-          type: string
-          title: To Currency
-      additionalProperties: false
-      type: object
-      required:
-      - amount
-      - from_currency
-      - to_currency
-      title: ConvertCurrencyRequest
-      example:
-        amount: '100.00'
-        from_currency: CREDITS
-        to_currency: USD
-    CreateWalletRequest:
-      properties:
-        agent_id:
-          type: string
-          maxLength: 128
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
-          title: Agent Id
-        initial_balance:
-          anyOf:
-          - type: number
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          title: Initial Balance
-          default: '0'
-        signup_bonus:
-          type: boolean
-          title: Signup Bonus
-          default: true
-      additionalProperties: false
-      type: object
-      required:
-      - agent_id
-      title: CreateWalletRequest
-      example:
-        agent_id: agent-alice
-        initial_balance: '100.00'
-        signup_bonus: true
+      title: HTTPValidationError
   securitySchemes:
     BearerAuth:
       type: http
