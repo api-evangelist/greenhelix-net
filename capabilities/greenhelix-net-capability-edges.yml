@@ -1,0 +1,49 @@
+slug: greenhelix-net
+provider: Green Helix
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 3
+edges:
+- tag: Payments
+  spec_file: greenhelix-net-payments-api-openapi.yml
+  capability_id: BC-4250.40
+  capability_id_l1: BC-4250
+  capability_name: Payment Collection & Dunning
+  confidence: 0.75
+  evidence: POST /v1/payments/intents/{intent_id}/capture 'Capture Intent'; 'Refund Intent'; 'Create Escrow';
+    schema CreateIntentRequest, RefundSettlementRequest
+  reason: Authorize-then-capture payment intents, partial capture, refunds, escrow release and split payments
+    are payment authorisation and collection mechanics for the platform's commercial flows. Within the
+    software frame this is subscription/payment collection; escrow and split-payment specifics are not
+    separately represented, hence 0.75 rather than higher.
+- tag: Identity
+  spec_file: greenhelix-net-identity-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.72
+  evidence: POST /v1/identity/agents  Register Agent; POST /v1/identity/agents/{agent_id}/verify  Verify
+    Agent; POST /v1/identity/orgs/{org_id}/members  Add Agent To Org; schemas RegisterAgentRequest, VerifyAgentRequest
+  reason: Registration, cryptographic verification, org membership and verifiable claims for agent principals
+    — identity lifecycle and credential verification, i.e. Identity & Access Management. The reputation/metrics
+    endpoints sit alongside it but the core surface is identity registration and verification.
+- tag: Billing
+  spec_file: greenhelix-net-billing-api-openapi.yml
+  capability_id: BC-4250
+  capability_id_l1: BC-4250
+  capability_name: Subscription Billing & Revenue Management
+  confidence: 0.7
+  evidence: GET /v1/billing/wallets/{agent_id}/usage  Get Usage Summary; GET /v1/billing/wallets/{agent_id}/revenue  Get
+    Revenue Report; PUT /v1/billing/wallets/{agent_id}/budget  Set Budget Cap
+  reason: Per-agent wallets with deposits, withdrawals, transaction ledgers, metered usage summaries,
+    budget caps and revenue reporting — this is the metered billing and revenue side of the platform's
+    commercial model. The surface spans metering, charging and revenue analytics, so L1 only.
