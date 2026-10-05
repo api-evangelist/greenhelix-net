@@ -1,0 +1,12 @@
+{
+ "url": "https://api.greenhelix.net/v1/openapi.json",
+ "requested_url": "https://api.greenhelix.net/v1/openapi.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 123527,
+ "sha256": "57d6d6901ee74fe983234f04fb5fbe039f7a9c2a44ec9bab62f04f3482181c23",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the archived file is byte-identical to what the provider serves."
+}
