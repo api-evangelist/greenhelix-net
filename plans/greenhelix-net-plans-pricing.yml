@@ -104,3 +104,35 @@ usage_pricing:
   gateway_fees:
     payment_intent: 2% gateway fee (ADR-011)
     escrow: 1.5% of amount, min 0.01, max 10.0 credits (api-reference create_escrow)
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - free
+  - subscription
+  units: []
+  plans:
+  - name: Free
+    access: free
+    model: free
+    model_how: derived
+    units: []
+    periods: []
+  - name: Starter
+    access: other
+    model: subscription
+    model_how: stated
+    units: []
+    periods: []
+  - name: Pro
+    access: other
+    model: subscription
+    model_how: stated
+    units: []
+    periods: []
+  - name: Enterprise
+    access: other
+    model: subscription
+    model_how: stated
+    units: []
+    periods: []
