@@ -1,0 +1,31 @@
+# Front Door AI Index — greenhelix-net — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: greenhelix-net
+  lexicon_version: '1.0'
+  probed_at: '2026-09-25'
+  host: greenhelix.net
+  final_host: www.greenhelix.net
+  ownership: own
+  owner: greenhelix-net
+  shares_host_with: null
+  inherited_from: null
+  alias_of: null
+  verdict: scored
+  score: 7
+  band: 4
+  band_label: moderate
+  host_score: 7
+  density: 25.09
+  words: 279
+  tiers:
+    agentic: 4
+    core: 3
+    model: 0
+  ambiguous: 12
+  top_terms:
+    agent: 12
+    AI agent: 3
+    AI: 3
+    autonomous agent: 1
