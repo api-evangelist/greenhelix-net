@@ -665,47 +665,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ConvertCurrencyRequest:
-      properties:
-        amount:
-          anyOf:
-          - type: number
-            maximum: 1000000000.0
-            exclusiveMinimum: 0.0
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
-          title: Amount
-        from_currency:
-          type: string
-          title: From Currency
-        to_currency:
-          type: string
-          title: To Currency
-      additionalProperties: false
-      type: object
-      required:
-      - amount
-      - from_currency
-      - to_currency
-      title: ConvertCurrencyRequest
-      example:
-        amount: '100.00'
-        from_currency: CREDITS
-        to_currency: USD
-    CreateBillingApiKeyRequest:
-      properties:
-        tier:
-          type: string
-          title: Tier
-          default: free
-      additionalProperties: false
-      type: object
-      title: CreateBillingApiKeyRequest
-      description: 'Self-service API key creation — v1.2.4 audit P0-1 successor
-
-        of the former ``POST /v1/infra/keys``.'
-      example:
-        tier: free
     CreateWalletRequest:
       properties:
         agent_id:
@@ -733,60 +692,6 @@ components:
         agent_id: agent-alice
         initial_balance: '100.00'
         signup_bonus: true
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    DepositRequest:
-      properties:
-        amount:
-          anyOf:
-          - type: number
-            maximum: 1000000000.0
-            exclusiveMinimum: 0.0
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
-          title: Amount
-        currency:
-          type: string
-          title: Currency
-          default: CREDITS
-        description:
-          type: string
-          maxLength: 2000
-          title: Description
-          default: ''
-      additionalProperties: false
-      type: object
-      required:
-      - amount
-      title: DepositRequest
-      example:
-        amount: '50.00'
-        currency: CREDITS
-        description: Top-up via Stripe
     BudgetCapRequest:
       properties:
         daily:
@@ -842,6 +747,48 @@ components:
         amount: '25.00'
         currency: CREDITS
         description: Payout to external wallet
+    CreateBillingApiKeyRequest:
+      properties:
+        tier:
+          type: string
+          title: Tier
+          default: free
+      additionalProperties: false
+      type: object
+      title: CreateBillingApiKeyRequest
+      description: 'Self-service API key creation — v1.2.4 audit P0-1 successor
+
+        of the former ``POST /v1/infra/keys``.'
+      example:
+        tier: free
+    DepositRequest:
+      properties:
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        currency:
+          type: string
+          title: Currency
+          default: CREDITS
+        description:
+          type: string
+          maxLength: 2000
+          title: Description
+          default: ''
+      additionalProperties: false
+      type: object
+      required:
+      - amount
+      title: DepositRequest
+      example:
+        amount: '50.00'
+        currency: CREDITS
+        description: Top-up via Stripe
     HTTPValidationError:
       properties:
         detail:
@@ -851,6 +798,59 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ConvertCurrencyRequest:
+      properties:
+        amount:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            exclusiveMinimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,8}0*$
+          title: Amount
+        from_currency:
+          type: string
+          title: From Currency
+        to_currency:
+          type: string
+          title: To Currency
+      additionalProperties: false
+      type: object
+      required:
+      - amount
+      - from_currency
+      - to_currency
+      title: ConvertCurrencyRequest
+      example:
+        amount: '100.00'
+        from_currency: CREDITS
+        to_currency: USD
   securitySchemes:
     BearerAuth:
       type: http

@@ -250,6 +250,54 @@ components:
           description: Check positive balance
         scope: economic
         timeout_seconds: 300
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    VerifyProofRequest:
+      properties:
+        proof_hash:
+          type: string
+          maxLength: 128
+          title: Proof Hash
+      additionalProperties: false
+      type: object
+      required:
+      - proof_hash
+      title: VerifyProofRequest
+      example:
+        proof_hash: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     PropertySpecRequest:
       properties:
         name:
@@ -280,54 +328,6 @@ components:
       - name
       - expression
       title: PropertySpecRequest
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    VerifyProofRequest:
-      properties:
-        proof_hash:
-          type: string
-          maxLength: 128
-          title: Proof Hash
-      additionalProperties: false
-      type: object
-      required:
-      - proof_hash
-      title: VerifyProofRequest
-      example:
-        proof_hash: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     BearerAuth:
       type: http

@@ -188,6 +188,15 @@ components:
       - escrow_id
       - opener
       title: OpenDisputeRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ValidationError:
       properties:
         loc:
@@ -214,6 +223,20 @@ components:
       - msg
       - type
       title: ValidationError
+    RespondToDisputeRequest:
+      properties:
+        respondent:
+          type: string
+          title: Respondent
+        response:
+          type: string
+          title: Response
+      additionalProperties: false
+      type: object
+      required:
+      - respondent
+      - response
+      title: RespondToDisputeRequest
     ResolveDisputeRequest:
       properties:
         resolution:
@@ -232,29 +255,6 @@ components:
       - resolution
       - resolved_by
       title: ResolveDisputeRequest
-    RespondToDisputeRequest:
-      properties:
-        respondent:
-          type: string
-          title: Respondent
-        response:
-          type: string
-          title: Response
-      additionalProperties: false
-      type: object
-      required:
-      - respondent
-      - response
-      title: RespondToDisputeRequest
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     BearerAuth:
       type: http

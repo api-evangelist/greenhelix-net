@@ -489,16 +489,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    RevokeApiKeyRequest:
-      properties:
-        key_hash_prefix:
-          type: string
-          title: Key Hash Prefix
-      additionalProperties: false
-      type: object
-      required:
-      - key_hash_prefix
-      title: RevokeApiKeyRequest
     RegisterWebhookRequest:
       properties:
         url:
@@ -526,32 +516,45 @@ components:
       - events
       - secret
       title: RegisterWebhookRequest
-    ValidationError:
+    PublishEventRequest:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        event_type:
           type: string
-          title: Message
-        type:
+          title: Event Type
+        source:
           type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
+          title: Source
+        payload:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Payload
+      additionalProperties: false
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - event_type
+      - source
+      title: PublishEventRequest
+    RotateKeyRequest:
+      properties:
+        current_key:
+          type: string
+          title: Current Key
+      additionalProperties: false
+      type: object
+      required:
+      - current_key
+      title: RotateKeyRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     RegisterEventSchemaRequest:
       properties:
         event_type:
@@ -567,16 +570,6 @@ components:
       - event_type
       - schema
       title: RegisterEventSchemaRequest
-    RotateKeyRequest:
-      properties:
-        current_key:
-          type: string
-          title: Current Key
-      additionalProperties: false
-      type: object
-      required:
-      - current_key
-      title: RotateKeyRequest
     RestoreDatabaseRequest:
       properties:
         backup_path:
@@ -614,26 +607,6 @@ components:
         resolved server-side against ``A2A_DATA_DIR/backups`` so callers
 
         never need to know the absolute path.'
-    PublishEventRequest:
-      properties:
-        event_type:
-          type: string
-          title: Event Type
-        source:
-          type: string
-          title: Source
-        payload:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Payload
-      additionalProperties: false
-      type: object
-      required:
-      - event_type
-      - source
-      title: PublishEventRequest
     BackupDatabaseRequest:
       properties:
         encrypt:
@@ -643,15 +616,42 @@ components:
       additionalProperties: false
       type: object
       title: BackupDatabaseRequest
-    HTTPValidationError:
+    ValidationError:
       properties:
-        detail:
+        loc:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Detail
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
       type: object
-      title: HTTPValidationError
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    RevokeApiKeyRequest:
+      properties:
+        key_hash_prefix:
+          type: string
+          title: Key Hash Prefix
+      additionalProperties: false
+      type: object
+      required:
+      - key_hash_prefix
+      title: RevokeApiKeyRequest
   securitySchemes:
     BearerAuth:
       type: http

@@ -219,21 +219,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    UpdateServerRequest:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Url
-      additionalProperties: false
-      type: object
-      title: UpdateServerRequest
     ValidationError:
       properties:
         loc:
@@ -260,6 +245,15 @@ components:
       - msg
       - type
       title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     RegisterServerRequest:
       properties:
         name:
@@ -283,15 +277,21 @@ components:
       - name
       - url
       title: RegisterServerRequest
-    HTTPValidationError:
+    UpdateServerRequest:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Url
+      additionalProperties: false
       type: object
-      title: HTTPValidationError
+      title: UpdateServerRequest
   securitySchemes:
     BearerAuth:
       type: http

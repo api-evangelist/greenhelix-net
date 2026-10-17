@@ -452,44 +452,20 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    UpdateServiceRequest:
+    RateServiceRequest:
       properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        category:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Category
-        tags:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Tags
-        endpoint:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Endpoint
-        metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Metadata
+        rating:
+          type: integer
+          title: Rating
+        review:
+          type: string
+          title: Review
+          default: ''
       additionalProperties: false
       type: object
-      title: UpdateServiceRequest
+      required:
+      - rating
+      title: RateServiceRequest
     AtlasPreflightRequest:
       properties:
         service_id:
@@ -521,53 +497,15 @@ components:
         expected_cost: 1.0
         min_trust_score: 60.0
         service_id: svc-abc123
-    AtlasBrokerRequest:
+    HTTPValidationError:
       properties:
-        query:
-          type: string
-          maxLength: 500
-          title: Query
-        payer:
-          type: string
-          maxLength: 128
-          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
-          title: Payer
-        budget:
-          anyOf:
-          - type: number
-            maximum: 1000000000.0
-            minimum: 0.0
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: Budget
-        min_trust_score:
-          anyOf:
-          - type: number
-            maximum: 100.0
-            minimum: 0.0
-          - type: 'null'
-          title: Min Trust Score
-        prefer:
-          type: string
-          title: Prefer
-          default: trust
-        description:
-          type: string
-          maxLength: 2000
-          title: Description
-          default: ''
-      additionalProperties: false
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - query
-      - payer
-      title: AtlasBrokerRequest
-      example:
-        budget: 50.0
-        description: Brokered analytics job
-        payer: agent-alice
-        query: data analysis
+      title: HTTPValidationError
     RegisterServiceRequest:
       properties:
         provider_id:
@@ -640,20 +578,91 @@ components:
       - msg
       - type
       title: ValidationError
-    RateServiceRequest:
+    AtlasBrokerRequest:
       properties:
-        rating:
-          type: integer
-          title: Rating
-        review:
+        query:
           type: string
-          title: Review
+          maxLength: 500
+          title: Query
+        payer:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$
+          title: Payer
+        budget:
+          anyOf:
+          - type: number
+            maximum: 1000000000.0
+            minimum: 0.0
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Budget
+        min_trust_score:
+          anyOf:
+          - type: number
+            maximum: 100.0
+            minimum: 0.0
+          - type: 'null'
+          title: Min Trust Score
+        prefer:
+          type: string
+          title: Prefer
+          default: trust
+        description:
+          type: string
+          maxLength: 2000
+          title: Description
           default: ''
       additionalProperties: false
       type: object
       required:
-      - rating
-      title: RateServiceRequest
+      - query
+      - payer
+      title: AtlasBrokerRequest
+      example:
+        budget: 50.0
+        description: Brokered analytics job
+        payer: agent-alice
+        query: data analysis
+    UpdateServiceRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        category:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Category
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+        endpoint:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Endpoint
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+      additionalProperties: false
+      type: object
+      title: UpdateServiceRequest
     AtlasDiscoverRequest:
       properties:
         query:
@@ -706,15 +715,6 @@ components:
         min_trust_score: 50.0
         prefer: trust
         query: analytics
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     BearerAuth:
       type: http
