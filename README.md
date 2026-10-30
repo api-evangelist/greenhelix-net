@@ -64,5 +64,143 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Green Helix is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry) and added to the network as a stub for full-pipeline profiling.
-- https://greenhelix.net/
+Green Helix Consulting, LLC builds infrastructure for autonomous AI-agent commerce. Its A2A Commerce Gateway (api.greenhelix.net, v1.4.10) is a single REST API of 137 tools across 16 services: per-agent wallets and metered billing, authorize-then-capture payment intents, standard and performance-gated escrow, subscriptions and split payments, Ed25519 cryptographic agent identity with verifiable claims and reputation, a service marketplace with matching and ratings, composite trust scoring and SLA checks, end-to-end encrypted agent messaging with price negotiation, dispute resolution, HMAC-signed webhooks and an event bus, plus Stripe, GitHub and PostgreSQL connectors. It publishes an OpenAPI 3.1 contract, a machine-readable tool and tier catalog, an A2A agent card, an ai-plugin.json, Python and TypeScript SDKs, a local MCP server, and a sandbox that resets on every deploy. Errors are RFC 9457, rate limits are signaled in headers, and x402 payment proofs are accepted as an alternative to API keys.
+
+**Areas:** Agents · Agentic Commerce · Payments · Escrow · Billing · Marketplace · Identity · Trust · Messaging · Webhook · MCP · A2A
+
+## Green Helix on APIs.io
+
+Everything profiled for Green Helix is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/greenhelix-net/](https://apis.io/providers/greenhelix-net/)** — or go straight to one of the APIs or properties below.
+
+### APIs (22)
+
+- [Green Helix Batch API](https://apis.io/apis/greenhelix-net/greenhelix-net-batch-api/) — The Batch API from Green Helix — 1 operation(s) for batch.
+- [Green Helix Billing API](https://apis.io/apis/greenhelix-net/greenhelix-net-billing-api/) — The billing API from Green Helix — 18 operation(s) for billing.
+- [Green Helix Checkout API](https://apis.io/apis/greenhelix-net/greenhelix-net-checkout-api/) — The Checkout API from Green Helix — 3 operation(s) for checkout.
+- [Green Helix Disputes API](https://apis.io/apis/greenhelix-net/greenhelix-net-disputes-api/) — The disputes API from Green Helix — 4 operation(s) for disputes.
+- [Green Helix Events API](https://apis.io/apis/greenhelix-net/greenhelix-net-events-api/) — The Events API from Green Helix — 1 operation(s) for events.
+- [Green Helix Execute API](https://apis.io/apis/greenhelix-net/greenhelix-net-execute-api/) — The Execute API from Green Helix — 2 operation(s) for execute.
+- [Green Helix Gatekeeper API](https://apis.io/apis/greenhelix-net/greenhelix-net-gatekeeper-api/) — The gatekeeper API from Green Helix — 5 operation(s) for gatekeeper.
+- [Green Helix Health API](https://apis.io/apis/greenhelix-net/greenhelix-net-health-api/) — The Health API from Green Helix — 2 operation(s) for health.
+- [Green Helix Identity API](https://apis.io/apis/greenhelix-net/greenhelix-net-identity-api/) — The identity API from Green Helix — 15 operation(s) for identity.
+- [Green Helix Infra API](https://apis.io/apis/greenhelix-net/greenhelix-net-infra-api/) — The infra API from Green Helix — 15 operation(s) for infra.
+- [Green Helix Livez API](https://apis.io/apis/greenhelix-net/greenhelix-net-livez-api/) — The Livez API from Green Helix — 1 operation(s) for livez.
+- [Green Helix Marketplace API](https://apis.io/apis/greenhelix-net/greenhelix-net-marketplace-api/) — The marketplace API from Green Helix — 10 operation(s) for marketplace.
+- [Green Helix Messaging API](https://apis.io/apis/greenhelix-net/greenhelix-net-messaging-api/) — The messaging API from Green Helix — 2 operation(s) for messaging.
+- [Green Helix Onboarding API](https://apis.io/apis/greenhelix-net/greenhelix-net-onboarding-api/) — The Onboarding API from Green Helix — 1 operation(s) for onboarding.
+- [Green Helix Payments API](https://apis.io/apis/greenhelix-net/greenhelix-net-payments-api/) — The payments API from Green Helix — 19 operation(s) for payments.
+- [Green Helix Pricing API](https://apis.io/apis/greenhelix-net/greenhelix-net-pricing-api/) — The Pricing API from Green Helix — 6 operation(s) for pricing.
+- [Green Helix Readyz API](https://apis.io/apis/greenhelix-net/greenhelix-net-readyz-api/) — The Readyz API from Green Helix — 1 operation(s) for readyz.
+- [Green Helix Register API](https://apis.io/apis/greenhelix-net/greenhelix-net-register-api/) — The Register API from Green Helix — 1 operation(s) for register.
+- [Green Helix Signing Key API](https://apis.io/apis/greenhelix-net/greenhelix-net-signing-key-api/) — The Signing Key API from Green Helix — 1 operation(s) for signing key.
+- [Green Helix Stripe Webhook API](https://apis.io/apis/greenhelix-net/greenhelix-net-stripe-webhook-api/) — The Stripe Webhook API from Green Helix — 1 operation(s) for stripe webhook.
+- [Green Helix Trust API](https://apis.io/apis/greenhelix-net/greenhelix-net-trust-api/) — The trust API from Green Helix — 4 operation(s) for trust.
+- [Green Helix Ws API](https://apis.io/apis/greenhelix-net/greenhelix-net-ws-api/) — The Ws API from Green Helix — 1 operation(s) for ws.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Greenhelix Net Webhooks](https://apis.io/asyncapis/greenhelix-net/greenhelix-net-webhooks/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [greenhelix-net-mcp.yml](https://apis.io/servers/greenhelix-net/greenhelix-net-mcp-yml/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Greenhelix Net A2A Commerce Gateway Overlay](https://apis.io/overlays/greenhelix-net/greenhelix-net-a2a-commerce-gateway-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Greenhelix Net Authentication](https://apis.io/security/greenhelix-net/greenhelix-net-authentication/)
+- [Greenhelix Net Domain Security](https://apis.io/security/greenhelix-net/greenhelix-net-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Greenhelix Net Plans Pricing](https://apis.io/plans/greenhelix-net/greenhelix-net-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Greenhelix Net Rate Limits](https://apis.io/rate-limits/greenhelix-net/greenhelix-net-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://greenhelix.net/)
+- [Documentation](https://www.greenhelix.net/docs.html)
+- [Getting started](https://www.greenhelix.net/docs.html#getting-started)
+- [API reference](https://api.greenhelix.net/docs)
+- [Pricing](https://github.com/mirni/a2a#pricing)
+- [Support](https://www.greenhelix.net/index.html#contact)
+- [Changelog](https://github.com/mirni/a2a/blob/main/CHANGELOG.md)
+
+## API Evangelist rating
+
+**Kin Score 54.0** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 61.7 |
+| Contract quality | 56.2 |
+| Contract governance | 18.2 |
+| Operational transparency | 68.4 |
+| Developer ergonomics | 64.3 |
+| Access clarity | 42.1 |
+
+**Agent readiness 48.4** — agent-native
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | documented (partial credit) |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | verified |
+| Error Semantics | verified |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | yes |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | flavored (partial credit) |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 15.2** — Payments
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/greenhelix-net/](https://apis.io/providers/greenhelix-net/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Green Helix: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/greenhelix-net/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
